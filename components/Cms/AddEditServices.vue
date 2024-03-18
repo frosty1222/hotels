@@ -1,6 +1,5 @@
 <script setup>
 import { NButton, NForm, NFormItem, NInput, useMessage } from "naive-ui";
-
 const { restAPI } = useApi();
 const router = useRouter();
 const route = useRoute();
@@ -9,9 +8,11 @@ const userStore = useUserStore();
 const config = useRuntimeConfig();
 
 const type = route.query.type || "hotel";
-const object = JSON.parse(route.query.object);
+let object = {}
 const isEdit = route.query.isEdit || 'no';
-console.log('isEdit',isEdit)
+if(isEdit === 'yes'){
+  object = JSON.parse(route.query.object);
+}
 const { data: resOwner } = await restAPI.cms.getUserAll({
   params: {
     page: 1,
@@ -84,7 +85,8 @@ const formValue = ref({
   description: "",
   image: "",
   id:"",
-  isEdit:""
+  isEdit:"",
+  imageLink:""
 });
 
 if(isEdit === 'no'){
@@ -122,7 +124,6 @@ if(isEdit === 'no'){
   }
 }
 if(isEdit === 'yes'){
-  console.log("object.imageLink",object.imageLink);
   formValue.value = {
     owner_id: object.owner_id,
     name: object.name,
@@ -134,7 +135,7 @@ if(isEdit === 'yes'){
     description: object.description,
     image: "",
     id:object.id,
-    isEdit:isEdit
+    imageLink:object.imageLink ? JSON.stringify(object.imageLink):'',
   }
  switch (type) {
   case "hotel":
@@ -172,8 +173,7 @@ const handleSubmit = async (e, type) => {
   switch (type) {
     case "hotel":
       const body = {
-        ...formValue.value,
-        imageLink:object?.imageLink ? object.imageLink:'',
+        ...formValue.value
       };
       const newBody = useObjectToFormData(body);
       const response = await fetch(
@@ -197,7 +197,6 @@ const handleSubmit = async (e, type) => {
       {
         const body = {
           ...formValue.value,
-          imageLink:object?.imageLink ? object.imageLink:'',
         };
         const newBody = useObjectToFormData(body);
 
@@ -223,7 +222,6 @@ const handleSubmit = async (e, type) => {
       {
         const body = {
           ...formValue.value,
-          imageLink:object?.imageLink ? object.imageLink:'',
         };
         const newBody = useObjectToFormData(body);
 
@@ -249,7 +247,6 @@ const handleSubmit = async (e, type) => {
       {
         const body = {
           ...formValue.value,
-          imageLink:object?.imageLink ? object.imageLink:'',
         };
         const newBody = useObjectToFormData(body);
 
@@ -275,7 +272,6 @@ const handleSubmit = async (e, type) => {
       {
         const body = {
           ...formValue.value,
-          imageLink:object?.imageLink ? object.imageLink:'',
         };
         const newBody = useObjectToFormData(body);
 

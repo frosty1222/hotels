@@ -5,7 +5,6 @@ const { isEdit, editData } = defineProps({
   isEdit: Boolean,
   editData: Object,
 });
-console.log("🚀 ~ editData:", editData);
 
 const { restAPI } = useApi();
 const userStore = useUserStore();
@@ -30,11 +29,10 @@ const handleSubmit = async (e) => {
     const body = {
       ...formValue,
       id: editData.id,
-      list_image: editData.list_image,
+      list_image:editData.list_image ? JSON.stringify(editData.list_image):'',
     };
     // return;
     const newBody = useObjectToFormData(body);
-
     const response = await fetch(
       config.public.baseURL + "/api/story/add-story",
       {

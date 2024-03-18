@@ -538,11 +538,7 @@ watch(
             );
           break;
       }
-
-      loading.value = false;
     }
-
-    isReload.value = false;
   }
 );
 
