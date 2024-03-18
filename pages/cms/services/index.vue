@@ -112,7 +112,7 @@ const columnsHotel = [
       <div class="flex justify-center gap-2">
         <button
           class="flex items-center text-primary-blue bg-transparent outline-none p-0 !font-500"
-          onClick={() => navigateTo(`/cms/services/add-edit/${record.id}`)}
+          onClick={() => navigateTo(`/cms/services/add-edit?id=${record.id}&&type=${formValue.serviceType}&&object=${JSON.stringify(record)}&&isEdit=yes`)}
         >
           <Icon
             name="material-symbols:edit-square-outline"
@@ -183,7 +183,7 @@ const columnsCar = [
       <div class="flex justify-center gap-2">
         <button
           class="flex items-center text-primary-blue bg-transparent outline-none p-0 !font-500"
-          onClick={() => navigateTo(`/cms/services/add-edit/${record.id}`)}
+          onClick={() => navigateTo(`/cms/services/add-edit?id=${record.id}&&type=${formValue.serviceType}&&object=${JSON.stringify(record)}&&isEdit=yes`)}
         >
           <Icon
             name="material-symbols:edit-square-outline"
@@ -254,7 +254,7 @@ const columnsTour = [
       <div class="flex justify-center gap-2">
         <button
           class="flex items-center text-primary-blue bg-transparent outline-none p-0 !font-500"
-          onClick={() => navigateTo(`/cms/services/add-edit/${record.id}`)}
+          onClick={() => navigateTo(`/cms/services/add-edit?id=${record.id}&&type=${formValue.serviceType}&&object=${JSON.stringify(record)}&&isEdit=yes`)}
         >
           <Icon
             name="material-symbols:edit-square-outline"
@@ -325,7 +325,7 @@ const columnsRental = [
       <div class="flex justify-center gap-2">
         <button
           class="flex items-center text-primary-blue bg-transparent outline-none p-0 !font-500"
-          onClick={() => navigateTo(`/cms/services/add-edit/${record.id}`)}
+          onClick={() => navigateTo(`/cms/services/add-edit?id=${record.id}${record.id}&&type=${formValue.serviceType}&&object=${JSON.stringify(record)}&&isEdit=yes`)}
         >
           <Icon
             name="material-symbols:edit-square-outline"
@@ -382,7 +382,7 @@ const columnsActivity = [
     render: (row, index) => (
       <div class="flex justify-center">
         <img
-          src={`${config.public.baseURL}/photo/${row.images?.[0]?.fileName}`}
+          src={`${config.public.baseURL}/photo/${row.imageLink?.[0]?.fileName}`}
           class="w-10 h-8 rounded-[10px]"
         />
       </div>
@@ -396,7 +396,7 @@ const columnsActivity = [
       <div class="flex justify-center gap-2">
         <button
           class="flex items-center text-primary-blue bg-transparent outline-none p-0 !font-500"
-          onClick={() => navigateTo(`/cms/services/add-edit/${record.id}`)}
+          onClick={() => navigateTo(`/cms/services/add-edit?id=${record.id}&&type=${formValue.serviceType}&&object=${JSON.stringify(record)}&&isEdit=yes`)}
         >
           <Icon
             name="material-symbols:edit-square-outline"

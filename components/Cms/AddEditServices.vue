@@ -9,7 +9,9 @@ const userStore = useUserStore();
 const config = useRuntimeConfig();
 
 const type = route.query.type || "hotel";
-
+const object = JSON.parse(route.query.object);
+const isEdit = route.query.isEdit || 'no';
+console.log('isEdit',isEdit)
 const { data: resOwner } = await restAPI.cms.getUserAll({
   params: {
     page: 1,
@@ -81,9 +83,15 @@ const formValue = ref({
   from_price: "",
   description: "",
   image: "",
+  id:"",
+  isEdit:""
 });
 
-switch (type) {
+if(isEdit === 'no'){
+  formValue.value = {
+    isEdit:isEdit
+  }
+  switch (type) {
   case "hotel":
     formValue.value = {
       ...formValue.value,
@@ -111,8 +119,53 @@ switch (type) {
       activity_language_category_id: "",
     };
     break;
+  }
 }
-
+if(isEdit === 'yes'){
+  console.log("object.imageLink",object.imageLink);
+  formValue.value = {
+    owner_id: object.owner_id,
+    name: object.name,
+    location_name:object.location_name,
+    latitude: object.latitude,
+    longitude: object.longitude,
+    star_category_id: object.star_category_id,
+    from_price: object.from_price,
+    description: object.description,
+    image: "",
+    id:object.id,
+    isEdit:isEdit
+  }
+ switch (type) {
+  case "hotel":
+    formValue.value = {
+      ...formValue.value,
+      hotel_theme_id:object.hotel_theme_id,
+      hotel_facility_id:object.hotel_facility_id,
+    };
+    break;
+  case "tour":
+    formValue.value = {
+      ...formValue.value,
+      tour_category_id: object.tour_category_id,
+    };
+    break;
+  case "car":
+    formValue.value = {
+      ...formValue.value,
+      car_category_id:object.car_category_id,
+    };
+    break;
+  case "activity":
+    formValue.value = {
+      ...formValue.value,
+      activity_category_id:object.activity_category_id,
+      activity_duration_category_id:object.activity_duration_category_id,
+      activity_language_category_id:object.activity_language_category_id,
+    };
+    break;
+  }
+}
 const handleSubmit = async (e, type) => {
   e?.preventDefault();
 
@@ -120,9 +173,9 @@ const handleSubmit = async (e, type) => {
     case "hotel":
       const body = {
         ...formValue.value,
+        imageLink:object?.imageLink ? object.imageLink:'',
       };
       const newBody = useObjectToFormData(body);
-
       const response = await fetch(
         config.public.baseURL + "/api/service/add-hotel",
         {
@@ -144,6 +197,7 @@ const handleSubmit = async (e, type) => {
       {
         const body = {
           ...formValue.value,
+          imageLink:object?.imageLink ? object.imageLink:'',
         };
         const newBody = useObjectToFormData(body);
 
@@ -169,6 +223,7 @@ const handleSubmit = async (e, type) => {
       {
         const body = {
           ...formValue.value,
+          imageLink:object?.imageLink ? object.imageLink:'',
         };
         const newBody = useObjectToFormData(body);
 
@@ -194,6 +249,7 @@ const handleSubmit = async (e, type) => {
       {
         const body = {
           ...formValue.value,
+          imageLink:object?.imageLink ? object.imageLink:'',
         };
         const newBody = useObjectToFormData(body);
 
@@ -219,6 +275,7 @@ const handleSubmit = async (e, type) => {
       {
         const body = {
           ...formValue.value,
+          imageLink:object?.imageLink ? object.imageLink:'',
         };
         const newBody = useObjectToFormData(body);
 
