@@ -42,6 +42,82 @@ const menuOptions = [
     icon: renderIcon("carbon:ibm-cloud-internet-services"),
   },
   {
+    key: "/cms/service-children",
+    heading: "Services Children",
+    label: renderLabel("Services Children"),
+    icon: renderIcon("oui:index-mapping"),
+    children: [
+      {
+        key: "/cms/service-children/hotel",
+        heading: "Hotel",
+        label: renderLabel("Hotel", "/cms/children/hotel"),
+        icon: renderIcon("ep:magic-stick"),
+      },
+      {
+        key: "/cms/service-children/rental",
+        heading: "Rental",
+        label: renderLabel("Rental", "/cms/children/rental"),
+        icon: renderIcon("ep:magic-stick"),
+      },
+      {
+        key: "/cms/service-children/car",
+        heading: "Car",
+        label: renderLabel("Car", "/cms/children/car"),
+        icon: renderIcon("ep:magic-stick"),
+      },
+      {
+        key: "/cms/service-children/tour",
+        heading: "Tour",
+        label: renderLabel("Tour", "/cms/children/tour"),
+        icon: renderIcon("ep:magic-stick"),
+      },
+      {
+        key: "/cms/service-children/activity",
+        heading: "Activity",
+        label: renderLabel("Activity", "/cms/children/activity"),
+        icon: renderIcon("ep:magic-stick"),
+      },
+    ],
+  },
+  {
+    key: "/cms/category",
+    heading: "Category",
+    label: renderLabel("Category"),
+    icon: renderIcon("iconamoon:3d"),
+    children: [
+      {
+        key: "/cms/category/hotel",
+        heading: "Hotel",
+        label: renderLabel("Hotel", "/cms/category/hotel"),
+        icon: renderIcon("ep:magic-stick"),
+      },
+      {
+        key: "/cms/category/rental",
+        heading: "Rental",
+        label: renderLabel("Rental", "/cms/category/rental"),
+        icon: renderIcon("ep:magic-stick"),
+      },
+      {
+        key: "/cms/category/car",
+        heading: "Car",
+        label: renderLabel("Car", "/cms/category/car"),
+        icon: renderIcon("ep:magic-stick"),
+      },
+      {
+        key: "/cms/category/tour",
+        heading: "Tour",
+        label: renderLabel("Tour", "/cms/category/tour"),
+        icon: renderIcon("ep:magic-stick"),
+      },
+      {
+        key: "/cms/category/activity",
+        heading: "Activity",
+        label: renderLabel("Activity", "/cms/category/activity"),
+        icon: renderIcon("ep:magic-stick"),
+      },
+    ],
+  },
+  {
     key: "/cms/story",
     heading: "Story",
     label: renderLabel("Story", "/cms/story"),
