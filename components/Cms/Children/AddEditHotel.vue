@@ -110,6 +110,31 @@ const handleSubmit = async (e, type) => {
         } else message.error("Thêm mới thất bại!");
       }
       break;
+    case 'hotel facility category':
+    {
+        const body = {
+          ...formValue.value,
+        };
+
+        const response = await fetch(
+          config.public.baseURL + restAPI.API_ENDPOINTEXPORT.cms.children.addHotelFacilityCategory,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + userStore.userInfo.accessToken,
+            },
+            body: JSON.stringify(body),
+          }
+        );
+        const data = await response.json();
+
+        if (data?.success) {
+          message.success("Thêm mới thành công");
+          router.go(-1);
+        } else message.error("Thêm mới thất bại!");
+      }
+      break;
   }
 };
 const handleChange = (file) => {
@@ -126,7 +151,7 @@ const handleChange = (file) => {
       size="large"
       class="mt-6 w-full lg:w-1/2"
     >
-      <NFormItem label="Name"  v-if="type === 'hotel rule' || type === 'hotel theme'">
+      <NFormItem label="Name"  v-if="type === 'hotel rule' || type === 'hotel theme' ||  type === 'hotel facility category'">
         <NInput v-model:value="formValue.name" />
       </NFormItem>
       <NFormItem label="Value"  v-if="type === 'hotel rule'">

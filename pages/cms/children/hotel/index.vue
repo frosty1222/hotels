@@ -1,6 +1,5 @@
 <script setup lang="jsx">
 import { useMessage } from 'naive-ui';
-
 const { restAPI } = useApi();
 const config = useRuntimeConfig();
 const userStore = useUserStore();
@@ -24,6 +23,14 @@ const selectType = [
     label:"Hotel theme",
     value:"hotel theme"
    },
+   {
+    label:"Hotel star",
+    value:"hotel star"
+   },
+   {
+    label:"Hotel facility category",
+    value:"hotel facility category"
+   }
 ]
 let selectHotel = [
 ]
@@ -36,6 +43,8 @@ const handleOkPopConfirm =async (record)=>{
      url = "/api/hotel/add-hotel-facility";
    }else if(formValue.childType === 'hotel theme'){
       url = "/api/category/add-hotel-theme";
+   }else if(formValue.childType === 'hotel facility category'){
+    url = restAPI.API_ENDPOINTEXPORT.cms.children.addHotelFacilityCategory;
    }
       const body = {
         status:'delete',
@@ -184,6 +193,55 @@ const columnsFacility = [
     ),
   },
 ]
+const columnsFacilityCategory = [
+{
+    title: "Index",
+    width: 60,
+    align: "center",
+    render: (_, index) => <div>{index + 1}</div>,
+  },
+  {
+    title: "Name",
+    align: "center",
+    render: (row, index) => <div>{row.name}</div>,
+  },
+  {
+    title: "Actions",
+    align: "center",
+    width: 100,
+    render: (record) => (
+      <div class="flex justify-center gap-2">
+        <button
+          class="flex items-center text-primary-blue bg-transparent outline-none p-0 !font-500"
+          onClick={() => navigateTo('/cms/children/hotel/add-edit?type=' + formValue.childType + '&hotelId=' + formValue.serviceId + '&object=' + JSON.stringify(record) +'&isEdit='+true)}
+        >
+          <Icon
+            name="material-symbols:edit-square-outline"
+            class="text-2xl text-[#009DFF]"
+          />
+        </button>
+        <NPopconfirm
+          showIcon={false}
+          negativeText="Hủy"
+          positiveText="Xóa"
+          onPositiveClick={() => handleOkPopConfirm(record)}
+        >
+          {{
+            activator: () => (
+              <button class="flex items-center text-red bg-transparent outline-none p-0 !font-500">
+                <Icon
+                  name="material-symbols:delete-outline"
+                  class="text-2xl text-red-500"
+                />
+              </button>
+            ),
+            default: () => "Xác nhận xóa",
+          }}
+        </NPopconfirm>
+      </div>
+    ),
+  },
+]
 const columnsTheme = [
 {
     title: "Index",
@@ -233,6 +291,19 @@ const columnsTheme = [
     ),
   },
 ]
+const columnstar = [
+  {
+    title: "Index",
+    width: 60,
+    align: "center",
+    render: (_, index) => <div>{index + 1}</div>,
+  },
+  {
+    title: "Name",
+    align: "center",
+    render: (row, index) => <div>{row.name}</div>,
+  }
+]
 const loading = ref(false);
 const dataTable = ref({
   columns: columnsHotelRule,
@@ -280,6 +351,28 @@ watch(
           } else
             message.error(resTheme.value?.message || "Lấy dự liệu thất bại!");
           break;
+          case 'hotel star':
+          const { data: resTar } = await restAPI.cms.getStarCategory();
+            if (resTar.value?.success) {
+              loading.value = false
+              dataTable.value = {
+                columns: columnstar,
+                data: resTar.value?.data || [],
+              };
+            } else
+            message.error(resTar.value?.message || "Lấy dự liệu thất bại!");
+          break;
+          case 'hotel facility category':
+          const { data: resFacilityCAte } = await restAPI.cms.getHotelFacility();
+            if (resFacilityCAte.value?.success) {
+              loading.value = false
+              dataTable.value = {
+                columns: columnsFacilityCategory,
+                data: resFacilityCAte.value?.data || [],
+              };
+            } else
+            message.error(resFacilityCAte.value?.message || "Lấy dự liệu thất bại!");
+          break;
       }
     }
   }
@@ -314,6 +407,7 @@ definePageMeta({
           class="flex items-center gap-2 justify-end"
         >
           <NButton
+            v-if="formValue.childType !== 'hotel star'"
             class="bg-blue-500 text-white"
             @click="
               navigateTo('/cms/children/hotel/add-edit?type=' + formValue.childType + '&hotelId=' + formValue.serviceId);

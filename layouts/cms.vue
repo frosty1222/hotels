@@ -80,7 +80,7 @@ const menuOptions = [
       {
         key: "/cms/service-children/room",
         heading: "Room",
-        label: renderLabel("Activity", "/cms/children/room"),
+        label: renderLabel("Room", "/cms/children/room"),
         icon: renderIcon("ep:magic-stick"),
       },
     ],

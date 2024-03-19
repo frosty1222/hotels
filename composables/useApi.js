@@ -87,6 +87,7 @@ const API_ENDPOINTS = {
       addRentalAmenty:"/api/additional/add-rental-amenty",
       addRentalType:"/api/additional/add-rental-type",
       addRentalSuitalibity:"/api/additional/add-rental-suitability",
+      getRentalType:"/api/additional/get-rental-type",
       getRentalAmentyCategory:"/api/category/get-rental-amenty-category",
       getRentalAmenty:"/api/category/get-rental-amenty",
       getRentalSuitability:"/api/additional/get-rental-suitability",
@@ -94,7 +95,6 @@ const API_ENDPOINTS = {
 
 
       // activity
-      addActivityLanguage:"/api/category/add-activity-duration",
       addActivityDuration:"/api/category/add-activity-duration",
       getActivityDuration:"/api/category/get-activity-duration",
       getActivityLanguage:"/api/category/get-activity-language",
@@ -111,7 +111,6 @@ const API_ENDPOINTS = {
     },
   },
 };
-
 const NO_AUTH_API_ENDPOINTS = ["/api/login"];
 
 class Request {
@@ -352,7 +351,22 @@ class CMSManager {
   async getRentalAmentyCategory(data){
     return this.request.get(`${API_ENDPOINTS.cms.children.getRentalAmentyCategory}?rentalId=${data}`)
   }
+  async getRentalType(data){
+     return this.request.get(`${API_ENDPOINTS.cms.children.getRentalType}?rentalId=${data}`)
+  }
   // activity
+  async getActivityDuration(data){
+    return this.request.get(`${API_ENDPOINTS.cms.children.getActivityCategoryLanguage}?activityId=${data}`)
+  }
+  async getActivityLanguage(data){
+    return this.request.get(`${API_ENDPOINTS.cms.children.getActivityLanguage}?activityId=${data}`)
+  }
+  async getActivityDuratiopnCategory(data){
+    return this.request.get(API_ENDPOINTS.cms.children.getActivityDuratiopnCategory)
+  }
+  async getActivityCategoryLanguage(data){
+     return this.request.get(API_ENDPOINTS.cms.children.getActivityCategoryLanguage)
+  }
   //room
   async getRoom(data){
     return this.request.get(`${API_ENDPOINTS.cms.children.getRoom}?hotelId=${data}`)
@@ -360,6 +374,7 @@ class CMSManager {
   async getRoomFacility(data){
     return this.request.get(`${API_ENDPOINTS.cms.children.getRoomFacility}?roomId=${data}`)
   }
+
   // Additional
   async getAdditionalContact(data) {
     return this.request.get(API_ENDPOINTS.cms.additional, data);
@@ -394,6 +409,7 @@ class RestAPI {
     this.request = new Request();
     this.customer = new CustomerManager(this.request);
     this.cms = new CMSManager(this.request);
+    this.API_ENDPOINTEXPORT = API_ENDPOINTS;
   }
 }
 
