@@ -3,6 +3,10 @@ import { useMessage } from "naive-ui";
 const API_ENDPOINTS = {
   customer: {
     login: "/api/login",
+
+    // reservation
+    reserHotelDetail: "/api/reservation/hotel-reservation",
+    reserHotel: "/api/reservation/hotel-reservation",
   },
   cms: {
     sign: "/api/user/user-signup",
@@ -59,31 +63,32 @@ const API_ENDPOINTS = {
     additionalDeleteContact: "/api/additional/delete-contact",
 
     askQuestion: "/api/user/add-ask-question",
-    children:{
-      addHotelRule:"/api/hotel/add-hotel-rule",
-      addHotelFacility:"/api/hotel/add-hotel-facility",
-      addHotelTheme:"/api/hotel/add-hotel-theme",
-      getHotelRule:"/api/hotel/get-hotel-rule",
+    children: {
+      addHotelRule: "/api/hotel/add-hotel-rule",
+      addHotelFacility: "/api/hotel/add-hotel-facility",
+      addHotelTheme: "/api/hotel/add-hotel-theme",
+      getHotelRule: "/api/hotel/get-hotel-rule",
       gethotelFacility: "/api/hotel/get-hotel-facility",
-      getCategoryStar:"/api/category/get-category-star",
-      addHotelFacilityCategory:"/api/category/add-hotel-facility-category",
-      getHotelFacilityCategory:"/api/category/get-hotel-facility-category",
+      getCategoryStar: "/api/category/get-category-star",
+      addHotelFacilityCategory: "/api/category/add-hotel-facility-category",
+      getHotelFacilityCategory: "/api/category/get-hotel-facility-category",
       // tour
-      addLanguageTour:"/api/additional/add-language-tour",
-      addTourDuration:"/api/additional/add-tour-duration",
-      addTourFacility:"/api/additional/add-tour-facility",
-      addTourBulkDiscount:"/api/additional/add-tour-bulkdiscount",
-      getTourCategory:"/api/category/get-tour-category",
-      getTourLanguageCategory:"/api/category/get-tour-category-language",
-      getTourDurationCategory:"/api/category/get-tour-duration-category",
-      addTourCategoryLanguage:"/api/category/add-tour-category-language",
-      addTourDurationCategory:"/api/category/add-tour-duration-category",
+      addLanguageTour: "/api/additional/add-language-tour",
+      addTourDuration: "/api/additional/add-tour-duration",
+      addTourFacility: "/api/additional/add-tour-facility",
+      addTourBulkDiscount: "/api/additional/add-tour-bulkdiscount",
+      getTourCategory: "/api/category/get-tour-category",
+      getTourLanguageCategory: "/api/category/get-tour-category-language",
+      getTourDurationCategory: "/api/category/get-tour-duration-category",
+      addTourCategoryLanguage: "/api/category/add-tour-category-language",
+      addTourDurationCategory: "/api/category/add-tour-duration-category",
       // car
-      addCarFeature:"/api/additional/add-car-feature",
-      addCarCategory:"/api/category/add-car-category",
-      getCarCategory:"/api/category/get-car-category",
-      getCarFeature:"/api/additional/get-car-feature",
+      addCarFeature: "/api/additional/add-car-feature",
+      addCarCategory: "/api/category/add-car-category",
+      getCarCategory: "/api/category/get-car-category",
+      getCarFeature: "/api/additional/get-car-feature",
       // rental
+<<<<<<< HEAD
       addRentalAmenty:"/api/additional/add-rental-amenty",
       addRentalType:"/api/additional/add-rental-type",
       addRentalSuitalibity:"/api/additional/add-rental-suitability",
@@ -103,11 +108,33 @@ const API_ENDPOINTS = {
       addActivity:"/api/category/add-activity-duration",
       addActivityLanguage:"/api/category/add-activity-language",
       addActivityCategory:"/api/category/add-activity-category",
+=======
+      addRentalAmenty: "/api/additional/add-rental-amenty",
+      addRentalType: "/api/additional/add-rental-type",
+      addRentalSuitalibity: "/api/additional/add-rental-suitability",
+      getRentalAmentyCategory: "/api/category/get-rental-amenty-category",
+      getRentalAmenty: "/api/category/get-rental-amenty",
+      getRentalSuitability: "/api/additional/get-rental-suitability",
+      addRentalAmentyCategory: "/api/category/add-rental-amenty-category",
+
+      // activity
+      addActivityLanguage: "/api/category/add-activity-duration",
+      addActivityDuration: "/api/category/add-activity-duration",
+      getActivityDuration: "/api/category/get-activity-duration",
+      getActivityLanguage: "/api/category/get-activity-language",
+      getActivityDuratiopnCategory:
+        "/api/category/get-activity-duration-category",
+      getActivityCategoryLanguage:
+        "/api/category/get-activity-language-category",
+      addActivity: "/api/category/add-activity-duration",
+      addActivityLanguage: "/api/category/add-activity-language",
+      addActivityCategory: "/api/category/add-activity-category",
+>>>>>>> 9bf4c15 (call api vnpay)
       // room
-      addRoom:"/api/additional/add-room",
-      addRoomFacility:"/api/additional/add-room-facility",
-      getRoom:"/api/additional/get-room",
-      getRoomFacility:"/api/additional/add-room-facility",
+      addRoom: "/api/additional/add-room",
+      addRoomFacility: "/api/additional/add-room-facility",
+      getRoom: "/api/additional/get-room",
+      getRoomFacility: "/api/additional/add-room-facility",
     },
   },
 };
@@ -180,6 +207,14 @@ class CustomerManager {
   // Auth
   async login(data) {
     return this.request.post(API_ENDPOINTS.customer.login, data);
+  }
+
+  // Reservation
+  async getReserHotelDetail(data) {
+    return this.request.get(API_ENDPOINTS.customer.reserHotelDetail, data);
+  }
+  async createPaymentHotel(data) {
+    return this.request.post(API_ENDPOINTS.customer.reserHotel, data);
   }
 }
 
@@ -308,48 +343,66 @@ class CMSManager {
     return this.request.get(API_ENDPOINTS.cms.hotel, data);
   }
   async getHotelRule(data) {
-    return this.request.get(`${API_ENDPOINTS.cms.children.getHotelRule}?hotelId=${data}`);
-  }  
+    return this.request.get(
+      `${API_ENDPOINTS.cms.children.getHotelRule}?hotelId=${data}`
+    );
+  }
   async getHotelTheme(data) {
     return this.request.get(API_ENDPOINTS.cms.hotelTheme, data);
   }
   async getHotelFacility(data) {
     return this.request.get(API_ENDPOINTS.cms.hotelFacility, data);
   }
-  async getHotelFacilityData(data){
-    return this.request.get(`${API_ENDPOINTS.cms.children.gethotelFacility}?hotelId=${data}`);
+  async getHotelFacilityData(data) {
+    return this.request.get(
+      `${API_ENDPOINTS.cms.children.gethotelFacility}?hotelId=${data}`
+    );
   }
-  async getStarCategory(){
+  async getStarCategory() {
     return this.request.get(API_ENDPOINTS.cms.children.getCategoryStar);
   }
-  
-  //tour 
-  async getTourCategory(data){
-    return this.request.get(API_ENDPOINTS.cms.children.getTourCategory,data)
+
+  //tour
+  async getTourCategory(data) {
+    return this.request.get(API_ENDPOINTS.cms.children.getTourCategory, data);
   }
-  async getTourLanguageCategory(data){
-    return this.request.get(API_ENDPOINTS.cms.children.getTourLanguageCategory,data)
+  async getTourLanguageCategory(data) {
+    return this.request.get(
+      API_ENDPOINTS.cms.children.getTourLanguageCategory,
+      data
+    );
   }
-  async getTourDurationCategory(data){
-    return this.request.get(API_ENDPOINTS.cms.children.getTourDurationCategory,data)
+  async getTourDurationCategory(data) {
+    return this.request.get(
+      API_ENDPOINTS.cms.children.getTourDurationCategory,
+      data
+    );
   }
 
-  //car 
-  async getCarFeature(data){
-     return this.request.get(`${API_ENDPOINTS.cms.children.getCarFeature}?carId=${data}`)
+  //car
+  async getCarFeature(data) {
+    return this.request.get(
+      `${API_ENDPOINTS.cms.children.getCarFeature}?carId=${data}`
+    );
   }
-  async getCarCategory(data){
-    return this.request.get(API_ENDPOINTS.cms.children.getCarCategory,data)
+  async getCarCategory(data) {
+    return this.request.get(API_ENDPOINTS.cms.children.getCarCategory, data);
   }
   // rental
-  async getRentalSuitability(data){
-    return this.request.get(`${API_ENDPOINTS.cms.children.getRentalSuitability}?rentalId=${data}`)
+  async getRentalSuitability(data) {
+    return this.request.get(
+      `${API_ENDPOINTS.cms.children.getRentalSuitability}?rentalId=${data}`
+    );
   }
-  async getRentalAmenty(data){
-    return this.request.get(`${API_ENDPOINTS.cms.children.getRentalAmenty}?rentalId=${data}`)
+  async getRentalAmenty(data) {
+    return this.request.get(
+      `${API_ENDPOINTS.cms.children.getRentalAmenty}?rentalId=${data}`
+    );
   }
-  async getRentalAmentyCategory(data){
-    return this.request.get(`${API_ENDPOINTS.cms.children.getRentalAmentyCategory}?rentalId=${data}`)
+  async getRentalAmentyCategory(data) {
+    return this.request.get(
+      `${API_ENDPOINTS.cms.children.getRentalAmentyCategory}?rentalId=${data}`
+    );
   }
   async getRentalType(data){
      return this.request.get(`${API_ENDPOINTS.cms.children.getRentalType}?rentalId=${data}`)
@@ -368,11 +421,15 @@ class CMSManager {
      return this.request.get(API_ENDPOINTS.cms.children.getActivityCategoryLanguage)
   }
   //room
-  async getRoom(data){
-    return this.request.get(`${API_ENDPOINTS.cms.children.getRoom}?hotelId=${data}`)
+  async getRoom(data) {
+    return this.request.get(
+      `${API_ENDPOINTS.cms.children.getRoom}?hotelId=${data}`
+    );
   }
-  async getRoomFacility(data){
-    return this.request.get(`${API_ENDPOINTS.cms.children.getRoomFacility}?roomId=${data}`)
+  async getRoomFacility(data) {
+    return this.request.get(
+      `${API_ENDPOINTS.cms.children.getRoomFacility}?roomId=${data}`
+    );
   }
 
   // Additional
