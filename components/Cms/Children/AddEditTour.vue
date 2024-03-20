@@ -10,6 +10,7 @@ const config = useRuntimeConfig();
 const type = route.query.type || "tour language";
 const tourId = route.query.tourId;
 let object = route.query.object ? JSON.parse(route.query.object):{}
+console.log(object)
 const formValue = ref({
   name:"",
   tourId:null,
@@ -17,7 +18,8 @@ const formValue = ref({
   status:"",
   icon:"",
   tour_language_category_id:null,
-  tour_duration_category_id:null
+  tour_duration_category_id:null,
+  image:""
 });
 const selectType = [
    {
@@ -46,22 +48,20 @@ const selectType = [
    }
 ]
 const TourFacility = ref({
-  highlighted:[
-    {"name":""}
+  highlighted: object.highlighted || [{ name: "" }],
+  IncludedAndExcluded: [{include:object.IncludedAndExcluded[0].include},
+  {exclude:object.IncludedAndExcluded[1].exclude}] || [
+    { include:[]},
+    { exclude:[]}
   ],
-  IncludedAndExcluded:[
-    {
-      include:[]
-    },
-    {
-      exclude:[]
-    }
-  ],
-  itinerary:[],
-  duration:[],
-  language:[],
-  passenger:[],
-})
+  itinerary: object.itinerary || [{ time: "", title: "", description: "" }],
+  duration: object.duration || [],
+  language: object.language || [],
+  passenger: object.passenger || [],
+  tourId: object.tourId || null,
+  id:object ? object.id:""
+});
+console.log("TourFacility",TourFacility.value)
 const { data: resCateLang } = await restAPI.cms.getTourLanguageCategory();
 const selectTourLanguageCategory = resCateLang.value?.data?.map((c) => ({
   label: c.name,
@@ -78,66 +78,190 @@ const TourBulkDiscount = ref({
    to_adult:"",
    value:"",
    type:"",
-   tourId:""
+   tourId:tourId
 })
 formValue.value = {
   name:Object.keys(object).length > 0 ? object.name:"",
   tourId:Number(tourId),
-  id:Object.keys(object).length > 0 ? object.id:""
+  id:Object.keys(object).length > 0 ? object.id:"",
+  tour_language_category_id:Object.keys(object).length > 0 ? object.tour_language_category_id:"",
+  tour_duration_category_id:Object.keys(object).length > 0 ? object.tour_duration_category_id:"",
 }
 const handleSubmit = async (e, type) => {
   e?.preventDefault();
 
   try {
-    let endpoint;
-
     switch (type) {
-      case selectType[0].value:
-          endpoint = restAPI.API_ENDPOINTEXPORT.cms.children.addLanguageTour;
+      case selectType[0].value:{
+          const body = { ...formValue.value };
+          const response = await fetch(
+            config.public.baseURL + restAPI.API_ENDPOINTEXPORT.cms.children.addLanguageTour,
+            {
+              method: "POST",
+              headers: {
+                Authorization: "Bearer " + userStore.userInfo.accessToken,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(body),
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+
+          const data = await response.json();
+
+          if (data?.success) {
+            message.success("Thêm mới thành công");
+            router.go();
+          } else {
+            message.error("Thêm mới thất bại!");
+          }
+      }
         break;
-      case selectType[1].value:
-          endpoint = restAPI.API_ENDPOINTEXPORT.cms.children.addLanguageTour;
+      case selectType[1].value:{
+          const body = { ...formValue.value };
+          const response = await fetch(
+            config.public.baseURL + restAPI.API_ENDPOINTEXPORT.cms.children.addTourCategoryLanguage,
+            {
+              method: "POST",
+              headers: {
+                Authorization: "Bearer " + userStore.userInfo.accessToken,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(body),
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+
+          const data = await response.json();
+
+          if (data?.success) {
+            message.success("Thêm mới thành công");
+            router.go();
+          } else {
+            message.error("Thêm mới thất bại!");
+          }
+      }
       break;
-      case selectType[2].value:
-          endpoint = restAPI.API_ENDPOINTEXPORT.cms.children.addTourCategoryLanguage;
+      case selectType[2].value:{
+          const body = { ...formValue.value };
+          const newBody = useObjectToFormData(body);
+          const response = await fetch(
+            config.public.baseURL + restAPI.API_ENDPOINTEXPORT.cms.children.addTourDuration,
+            {
+              method: "POST",
+              headers: {
+                Authorization: "Bearer " + userStore.userInfo.accessToken,
+              },
+              body: newBody,
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+
+          const data = await response.json();
+
+          if (data?.success) {
+            message.success("Thêm mới thành công");
+            router.go();
+          } else {
+            message.error("Thêm mới thất bại!");
+          }
+      }
       break;
-      case selectType[3].value:
-          endpoint = restAPI.API_ENDPOINTEXPORT.cms.children.addTourDurationCategory;
+      case selectType[3].value:{
+          const body = { ...formValue.value };
+          const response = await fetch(
+            config.public.baseURL + restAPI.API_ENDPOINTEXPORT.cms.children.addTourDurationCategory,
+            {
+              method: "POST",
+              headers: {
+                Authorization: "Bearer " + userStore.userInfo.accessToken,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(body),
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+
+          const data = await response.json();
+
+          if (data?.success) {
+            message.success("Thêm mới thành công");
+            router.go();
+          } else {
+            message.error("Thêm mới thất bại!");
+          }
+      }
       break;
-      case selectType[4].value:
-        endpoint = restAPI.API_ENDPOINTEXPORT.cms.children.addTourFacility;
+      case selectType[4].value:{
+        const body = { ...TourFacility.value };
+          const response = await fetch(
+            config.public.baseURL + restAPI.API_ENDPOINTEXPORT.cms.children.addTourFacility,
+            {
+              method: "POST",
+              headers: {
+                Authorization: "Bearer " + userStore.userInfo.accessToken,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(body),
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+
+          const data = await response.json();
+
+          if (data?.success) {
+            message.success("Thêm mới thành công");
+            router.go();
+          } else {
+            message.error("Thêm mới thất bại!");
+          }
+      }
         break;
-        case selectType[5].value:
-        endpoint = restAPI.API_ENDPOINTEXPORT.cms.children.addTourBulkDiscount;
+        case selectType[5].value:{
+          const body = { ...TourBulkDiscount.value };
+          const response = await fetch(
+            config.public.baseURL + restAPI.API_ENDPOINTEXPORT.cms.children.addTourBulkDiscount,
+            {
+              method: "POST",
+              headers: {
+                Authorization: "Bearer " + userStore.userInfo.accessToken,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(body),
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+
+          const data = await response.json();
+
+          if (data?.success) {
+            message.success("Thêm mới thành công");
+            router.go();
+          } else {
+            message.error("Thêm mới thất bại!");
+          }
+        }
         break;
       default:
         throw new Error('Invalid type');
-    }
-
-    const body = { ...formValue.value };
-    const response = await fetch(
-      config.public.baseURL + endpoint,
-      {
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + userStore.userInfo.accessToken,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-
-    const data = await response.json();
-
-    if (data?.success) {
-      message.success("Thêm mới thành công");
-      router.go();
-    } else {
-      message.error("Thêm mới thất bại!");
     }
   } catch (error) {
     console.error('An error occurred:', error);
@@ -157,10 +281,15 @@ const onCreate=()=>{
       }
   const onCreateIter=()=>{
     return {
-         item:"",
+         time:"",
          title:"",
          description:""
     };
+  }
+  const onCreateINandEx=()=> {
+     return {
+      name: '',
+    }
   }
 </script>
 
@@ -186,31 +315,40 @@ const onCreate=()=>{
         </div>
       </template>
     </n-dynamic-input>
-    <span class="label">Add Included</span>
-    <n-dynamic-input v-model:value="TourFacility.IncludedAndExcluded.include" :on-create="onCreate">
-      <template #create-button-default>
-        Add whatever you want
-      </template>
-      <template #default="{ value }">
-        <div style="display: flex; align-items: center; width: 100%">
-          <n-input v-model:value="value.name" type="text"  placeholder="Add tour include"/>
+<!-- Add Included -->
+<label for="">Add Include</label>
+<n-dynamic-input v-model:value="TourFacility.IncludedAndExcluded[0].include" :on-create="onCreateINandEx">
+  <template #create-button-default>
+    Add whatever you want
+  </template>
+  <template #default="{ value }">
+    <div style="display: flex; align-items: center; width: 100%">
+      <div>
+        <div >
+          <n-input v-model:value="value.name" type="text" placeholder="Add tour include"/>
         </div>
-      </template>
-    </n-dynamic-input>
-    
-    <span class="label">Excluded</span>
-    <n-dynamic-input v-model:value="TourFacility.IncludedAndExcluded.include" :on-create="onCreate">
-      <template #create-button-default>
-        Add whatever you want
-      </template>
-      <template #default="{ value }">
-        <div style="display: flex; align-items: center; width: 100%">
-          <n-input v-model:value="value.name" type="text"  placeholder="Add tour exclude"/>
+      </div>
+    </div>
+  </template>
+</n-dynamic-input>
+
+<label for="">Add Exclude</label>
+<n-dynamic-input v-model:value="TourFacility.IncludedAndExcluded[1].exclude" :on-create="onCreateINandEx">
+  <template #create-button-default>
+    Add whatever you want
+  </template>
+  <template #default="{ value }">
+    <div style="display: flex; align-items: center; width: 100%">
+      <div>
+        <div >
+          <n-input v-model:value="value.name" type="text" placeholder="Add tour include"/>
         </div>
-      </template>
-    </n-dynamic-input>
+      </div>
+    </div>
+  </template>
+</n-dynamic-input>
     <span class="label">Add Itinerary</span>
-    <n-dynamic-input
+    <!-- <n-dynamic-input
       v-model:value="TourFacility.itinerary"
       :on-create="onCreateIter"
       label="Add tour Itinerary"
@@ -227,7 +365,19 @@ const onCreate=()=>{
           </div>
         </div>
       </template>
-    </n-dynamic-input>
+    </n-dynamic-input> -->
+    <n-dynamic-input v-model:value="TourFacility.itinerary" :on-create="onCreateIter">
+    <template #create-button-default>
+      Add whatever you want
+    </template>
+    <template #default="{ value }">
+      <div style="display: flex; align-items: center; width: 100%">
+        <n-input v-model:value="value.time" type="text" />
+        <n-input v-model:value="value.title" type="text" />
+        <n-input v-model:value="value.description" type="text" />
+      </div>
+    </template>
+  </n-dynamic-input>
     <span class="label">Add Duration</span>
       <n-dynamic-input
       v-model:value="TourFacility.duration"
@@ -267,27 +417,27 @@ const onCreate=()=>{
   <div>
     <NForm
       ref="formRef"
-      :model="TourFacility"
+      :model="formValue"
       size="large"
       class="mt-6 w-full lg:w-1/2"
       v-if="type !== selectType[4].value && type !== selectType[5].value"
     >
-       <NFormItem v-if="type == type === selectType[0].value" label="Tour language category">
+       <NFormItem v-if="type === selectType[0].value" label="Tour language category">
         <NSelect
           v-model:value="formValue.tour_language_category_id"
           :options="selectTourLanguageCategory"
         />
       </NFormItem>
-      <NFormItem v-if="type !== selectType[1].value" label="Tour duration category">
+      <NFormItem v-if="type === selectType[2].value" label="Tour duration category">
         <NSelect
           v-model:value="formValue.tour_duration_category_id"
           :options="selectTourDurationCategory"
         />
       </NFormItem>
-      <NFormItem label="Name" v-if="type === selectType[1].value">
+      <NFormItem label="Name" v-if="type === selectType[1].value || type === selectType[3].value">
         <NInput v-model:value="formValue.name" />
       </NFormItem>
-      <NFormItem label="Image">
+      <NFormItem label="Image" v-if="type !== selectType[3].value && type !== selectType[1].value && type !== selectType[0].value">
         <NUpload
           accept="image/*"
           list-type="image-card"

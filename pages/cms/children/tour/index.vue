@@ -6,9 +6,10 @@ const userStore = useUserStore();
 const message = useMessage();
 const route = useRoute();
 const formValue = reactive({
-  childType:'tour language',
+  childType:'tour language category',
   serviceId:null
 })
+console.log("formValue:", formValue);
 const isReload = ref(true)
 const selectType = [
    {
@@ -97,20 +98,8 @@ const columnsTourLanguage = [
   {
     title: "Name",
     align: "center",
-    render: (row, index) => <div>{row?.tour_language_category.name}</div>,
+    render: (row, index) => <div>{row.tour_language_category?.name}</div>,
   },
-  {
-    title: "Icon",
-    align: "center",
-    render: (row, index) => (
-      <div class="flex justify-center">
-        <img
-          src={`${config.public.baseURL}/photo/${row.icon}`}
-          class="w-10 h-8 rounded-[10px]"
-        />
-      </div>
-    ),
-   },
   {
     title: "Actions",
     align: "center",
@@ -119,7 +108,7 @@ const columnsTourLanguage = [
       <div class="flex justify-center gap-2">
         <button
           class="flex items-center text-primary-blue bg-transparent outline-none p-0 !font-500"
-          onClick={() => navigateTo('/cms/children/car/add-edit?type=' + formValue.childType + '&tourId=' + formValue.serviceId + '&object=' + JSON.stringify(record) +'&isEdit='+true)}
+          onClick={() => navigateTo('/cms/children/tour/add-edit?type=' + formValue?.childType + '&tourId=' + formValue.serviceId + '&object=' + JSON.stringify(record) +'&isEdit='+true)}
         >
           <Icon
             name="material-symbols:edit-square-outline"
@@ -168,7 +157,7 @@ const columnsTourLanguacategory = [
       <div class="flex justify-center gap-2">
         <button
           class="flex items-center text-primary-blue bg-transparent outline-none p-0 !font-500"
-          onClick={() => navigateTo('/cms/children/car/add-edit?type=' + formValue.childType + '&tourId=' + formValue.serviceId + '&object=' + JSON.stringify(record) +'&isEdit='+true)}
+          onClick={() => navigateTo('/cms/children/tour/add-edit?type=' + formValue?.childType + '&tourId=' + formValue.serviceId + '&object=' + JSON.stringify(record) +'&isEdit='+true)}
         >
           <Icon
             name="material-symbols:edit-square-outline"
@@ -210,6 +199,18 @@ const columnsTourduration = [
     render: (row, index) => <div>{row.tour_duration_category.name}</div>,
   },
   {
+    title: "Icon",
+    align: "center",
+    render: (row, index) => (
+      <div class="flex justify-center">
+        <img
+          src={`${config.public.baseURL}/photo/${row.icon}`}
+          class="w-10 h-8 rounded-[10px]"
+        />
+      </div>
+    ),
+   },
+  {
     title: "Actions",
     align: "center",
     width: 100,
@@ -217,7 +218,7 @@ const columnsTourduration = [
       <div class="flex justify-center gap-2">
         <button
           class="flex items-center text-primary-blue bg-transparent outline-none p-0 !font-500"
-          onClick={() => navigateTo('/cms/children/car/add-edit?type=' + formValue.childType + '&tourId=' + formValue.serviceId + '&object=' + JSON.stringify(record) +'&isEdit='+true)}
+          onClick={() => navigateTo('/cms/children/tour/add-edit?type=' + formValue?.childType + '&tourId=' + formValue.serviceId + '&object=' + JSON.stringify(record) +'&isEdit='+true)}
         >
           <Icon
             name="material-symbols:edit-square-outline"
@@ -266,7 +267,7 @@ const columnsTourdurationCategory = [
       <div class="flex justify-center gap-2">
         <button
           class="flex items-center text-primary-blue bg-transparent outline-none p-0 !font-500"
-          onClick={() => navigateTo('/cms/children/car/add-edit?type=' + formValue.childType + '&tourId=' + formValue.serviceId + '&object=' + JSON.stringify(record) +'&isEdit='+true)}
+          onClick={() => navigateTo('/cms/children/tour/add-edit?type=' + formValue?.childType + '&tourId=' + formValue.serviceId + '&object=' + JSON.stringify(record) +'&isEdit='+true)}
         >
           <Icon
             name="material-symbols:edit-square-outline"
@@ -303,45 +304,105 @@ const columnsTourFacility = [
     render: (_, index) => <div>{index + 1}</div>,
   },
   {
-    title: "Highlighted",
-    align: "center",
-    render: (row, index) =><div key={index}>{row.name}</div>,
-  },
+  title: "Highlighted",
+  align: "center",
+  render: (row, index) => (
+    <div key={index}>
+      {row.highlighted.map((highlight, idx) => (
+        <div key={idx}>{highlight.name}</div>
+      ))}
+    </div>
+  )
+},
   {
-    title: "IncludedAndExcluded",
-    align: "center",
-    render: (row, index) =><div key={index}>{row.name}</div>,
-  },
+  title: "IncludedAndExcluded",
+  align: "center",
+  render: (row, index) => {
+    let includeName = "";
+    let excludeName = "";
+
+    // Check if the row includes the 'IncludedAndExcluded' key and if it contains 'include' and 'exclude' arrays
+    if (row.IncludedAndExcluded && row.IncludedAndExcluded.length > 0) {
+      const included = row.IncludedAndExcluded.find(obj => obj.include);
+      const excluded = row.IncludedAndExcluded.find(obj => obj.exclude);
+
+      // Access the 'name' property inside the 'include' array
+      if (included && included.include && included.include.length > 0) {
+        includeName = included.include[0].name;
+      }
+
+      // Access the 'name' property inside the 'exclude' array
+      if (excluded && excluded.exclude && excluded.exclude.length > 0) {
+        excludeName = excluded.exclude[0].name;
+      }
+    }
+
+    return <div key={index}>include: {includeName} - exclude: {excludeName}</div>;
+  }
+},
+{
+  title: "Itinerary",
+  align: "center",
+  render: (row, index) => (
+    <div key={index}>
+      {row.itinerary.map((item, idx) => (
+        <div key={idx}>
+          <div>Time: {item.time}</div>
+          <div>Title: {item.title}</div>
+          <div>Description: {item.description}</div>
+        </div>
+      ))}
+    </div>
+  )
+},
+
   {
-    title: "Itinerary",
-    align: "center",
-    render: (row, index) =>(
-      <div key={index}>
-        {row.time}
-        {row.title}
-        {row.description}
-      </div>
-    ),
-  },
+  title: "Duration",
+  align: "center",
+  render: (row, index) => {
+    let durations = "";
+
+    // Check if the row includes the 'language' key and if it contains an array of languages
+    if (row.duration && row.duration.length > 0) {
+      // Join the array of languages into a single string
+      durations = row.duration.join(', ');
+    }
+
+    return <div key={index}>{durations}</div>;
+  }
+},
+
   {
-    title: "Duration",
-    align: "center",
-    render: (row, index) =><div key={index}>{row}</div>,
-  },
+  title: "Language",
+  align: "center",
+  render: (row, index) => {
+    let languages = "";
+
+    // Check if the row includes the 'language' key and if it contains an array of languages
+    if (row.language && row.language.length > 0) {
+      // Join the array of languages into a single string
+      languages = row.language.join(', ');
+    }
+
+    return <div key={index}>{languages}</div>;
+  }
+},
+
   {
-    title: "language",
-    align: "center",
-    render: (row, index) =><div key={index}>{row}</div>,
-  },
-  {
-    title: "passenger",
-    align: "center",
-    render: (row, index) =>(
-      <div key={index}>
-        adult:{row.adult} - children:{row.children}
-      </div>
-    ),
-  },
+  title: "Passenger",
+  align: "center",
+  render: (row, index) => {
+    let passengers = "";
+
+    // Check if the row includes the 'passenger' key and if it contains an array of passengers
+    if (row.passenger && row.passenger.length > 0) {
+      // Map through the array of passengers and concatenate key-value pairs
+      passengers = row.passenger.map(passenger => `${passenger.key}: ${passenger.value}`).join(', ');
+    }
+
+    return <div key={index}>{passengers}</div>;
+  }
+},
   {
     title: "Actions",
     align: "center",
@@ -350,7 +411,7 @@ const columnsTourFacility = [
       <div class="flex justify-center gap-2">
         <button
           class="flex items-center text-primary-blue bg-transparent outline-none p-0 !font-500"
-          onClick={() => navigateTo('/cms/children/car/add-edit?type=' + formValue.childType + '&tourId=' + formValue.serviceId + '&object=' + JSON.stringify(record) +'&isEdit='+true)}
+          onClick={() => navigateTo('/cms/children/tour/add-edit?type=' + formValue?.childType + '&tourId=' + formValue.serviceId + '&object=' + JSON.stringify(record) +'&isEdit='+true)}
         >
           <Icon
             name="material-symbols:edit-square-outline"
@@ -414,7 +475,7 @@ const columnsTourBulkdiscount = [
       <div class="flex justify-center gap-2">
         <button
           class="flex items-center text-primary-blue bg-transparent outline-none p-0 !font-500"
-          onClick={() => navigateTo('/cms/children/car/add-edit?type=' + formValue.childType + '&tourId=' + formValue.serviceId + '&object=' + JSON.stringify(record) +'&isEdit='+true)}
+          onClick={() => navigateTo('/cms/children/tour/add-edit?type=' + formValue?.childType + '&tourId=' + formValue.serviceId + '&object=' + JSON.stringify(record) +'&isEdit='+true)}
         >
           <Icon
             name="material-symbols:edit-square-outline"
@@ -446,11 +507,11 @@ const columnsTourBulkdiscount = [
 
 const loading = ref(false); 
 const dataTable = ref({
-  columns:columnsTourLanguage,
+  columns:[],
   data: [],
 });
 watch(
-  () => [formValue.childType,formValue.serviceId],
+  () => [formValue?.childType,formValue?.serviceId],
   async ([newType, newReload]) => {
     if (newType && newReload) {
       loading.value = true;
@@ -557,7 +618,7 @@ definePageMeta({
           <NButton
             class="bg-blue-500 text-white"
             @click="
-              navigateTo('/cms/children/tour/add-edit?type=' + formValue.childType + '&tourId=' + formValue.serviceId);
+              navigateTo('/cms/children/tour/add-edit?type=' + formValue?.childType + '&tourId=' + formValue.serviceId);
             "
           >
             Add
@@ -571,8 +632,8 @@ definePageMeta({
           :loading="loading"
           :single-line="false"
           single-column
-          :columns="dataTable.columns"
-          :data="dataTable.data"
+          :columns="dataTable?.columns"
+          :data="dataTable?.data"
           scroll-x="900"
           :pagination="paginationReactive"
         />
