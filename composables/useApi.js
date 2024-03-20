@@ -76,19 +76,22 @@ const API_ENDPOINTS = {
       addLanguageTour: "/api/additional/add-language-tour",
       addTourDuration: "/api/additional/add-tour-duration",
       addTourFacility: "/api/additional/add-tour-facility",
-      addTourBulkDiscount: "/api/additional/add-tour-bulkdiscount",
+      addTourBulkDiscount: "/api/additional/add-tour-bulkdiscount",      
+      addTourCategoryLanguage: "/api/category/add-tour-category-language",
+      addTourDurationCategory: "/api/category/add-tour-duration-category",
       getTourCategory: "/api/category/get-tour-category",
       getTourLanguageCategory: "/api/category/get-tour-category-language",
       getTourDurationCategory: "/api/category/get-tour-duration-category",
-      addTourCategoryLanguage: "/api/category/add-tour-category-language",
-      addTourDurationCategory: "/api/category/add-tour-duration-category",
+      getTourBulkdiscount:"/api/additional/get-tour-bulkdiscount",
+      getTourFacility:"/api/additional/get-tour-facility",
+      getTourLanguage:"/api/additional/get-language-tour",
+      getTourDuration:"/api/additional/get-tour-duration",
       // car
       addCarFeature: "/api/additional/add-car-feature",
       addCarCategory: "/api/category/add-car-category",
       getCarCategory: "/api/category/get-car-category",
       getCarFeature: "/api/additional/get-car-feature",
       // rental
-<<<<<<< HEAD
       addRentalAmenty:"/api/additional/add-rental-amenty",
       addRentalType:"/api/additional/add-rental-type",
       addRentalSuitalibity:"/api/additional/add-rental-suitability",
@@ -108,7 +111,6 @@ const API_ENDPOINTS = {
       addActivity:"/api/category/add-activity-duration",
       addActivityLanguage:"/api/category/add-activity-language",
       addActivityCategory:"/api/category/add-activity-category",
-=======
       addRentalAmenty: "/api/additional/add-rental-amenty",
       addRentalType: "/api/additional/add-rental-type",
       addRentalSuitalibity: "/api/additional/add-rental-suitability",
@@ -129,7 +131,6 @@ const API_ENDPOINTS = {
       addActivity: "/api/category/add-activity-duration",
       addActivityLanguage: "/api/category/add-activity-language",
       addActivityCategory: "/api/category/add-activity-category",
->>>>>>> 9bf4c15 (call api vnpay)
       // room
       addRoom: "/api/additional/add-room",
       addRoomFacility: "/api/additional/add-room-facility",
@@ -376,6 +377,26 @@ class CMSManager {
     return this.request.get(
       API_ENDPOINTS.cms.children.getTourDurationCategory,
       data
+    );
+  }
+  async getTourBulkdiscount(data){
+    return this.request.get(
+      `${API_ENDPOINTS.cms.children.getTourBulkdiscount}?tourId=${data}`
+    );
+  }
+  async getTourFacility(data){
+    return this.request.get(
+      `${API_ENDPOINTS.cms.children.getTourFacility}?tourId=${data}`
+    );
+  }
+  async getTourLanguage(data){
+    return this.request.get(
+      `${API_ENDPOINTS.cms.children.getTourLanguage}?tourId=${data}`
+    );
+  }
+  async getTourDuration(data){
+    return this.request.get(
+      `${API_ENDPOINTS.cms.children.getTourDuration}?tourId=${data}`
     );
   }
 
