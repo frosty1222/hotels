@@ -53,7 +53,7 @@ const handleOkPopConfirm =async (record)=>{
    }else if(formValue.childType === selectType[4].value){
     url = restAPI.API_ENDPOINTEXPORT.cms.children.addTourFacility;
    }else if(formValue.childType === selectType[5].value){
-    url = restAPI.API_ENDPOINTEXPORT.cms.children.addTourBulkdiscount;
+    url = restAPI.API_ENDPOINTEXPORT.cms.children.addTourBulkDiscount;
    } 
       const body = {
         status:'delete',

@@ -104,33 +104,14 @@ const API_ENDPOINTS = {
 
       // activity
       addActivityDuration:"/api/category/add-activity-duration",
+      addActivityLanguage:"/api/category/add-activity-language",
+      addActivityCategory:"/api/category/add-activity-category",
+      addActivityCategoryLanguage:"/api/category/add-activity-category-language",
       getActivityDuration:"/api/category/get-activity-duration",
       getActivityLanguage:"/api/category/get-activity-language",
       getActivityDuratiopnCategory:"/api/category/get-activity-duration-category",
       getActivityCategoryLanguage:"/api/category/get-activity-language-category",
-      addActivity:"/api/category/add-activity-duration",
-      addActivityLanguage:"/api/category/add-activity-language",
-      addActivityCategory:"/api/category/add-activity-category",
-      addRentalAmenty: "/api/additional/add-rental-amenty",
-      addRentalType: "/api/additional/add-rental-type",
-      addRentalSuitalibity: "/api/additional/add-rental-suitability",
-      getRentalAmentyCategory: "/api/category/get-rental-amenty-category",
-      getRentalAmenty: "/api/category/get-rental-amenty",
-      getRentalSuitability: "/api/additional/get-rental-suitability",
-      addRentalAmentyCategory: "/api/category/add-rental-amenty-category",
-
-      // activity
-      addActivityLanguage: "/api/category/add-activity-duration",
-      addActivityDuration: "/api/category/add-activity-duration",
-      getActivityDuration: "/api/category/get-activity-duration",
-      getActivityLanguage: "/api/category/get-activity-language",
-      getActivityDuratiopnCategory:
-        "/api/category/get-activity-duration-category",
-      getActivityCategoryLanguage:
-        "/api/category/get-activity-language-category",
-      addActivity: "/api/category/add-activity-duration",
-      addActivityLanguage: "/api/category/add-activity-language",
-      addActivityCategory: "/api/category/add-activity-category",
+      getActivityCategory:"/api/category/get-activity-category",
       // room
       addRoom: "/api/additional/add-room",
       addRoomFacility: "/api/additional/add-room-facility",
@@ -430,10 +411,13 @@ class CMSManager {
   }
   // activity
   async getActivityDuration(data){
-    return this.request.get(`${API_ENDPOINTS.cms.children.getActivityCategoryLanguage}?activityId=${data}`)
+    return this.request.get(`${API_ENDPOINTS.cms.children.getActivityDuration}?activityId=${data}`)
   }
   async getActivityLanguage(data){
     return this.request.get(`${API_ENDPOINTS.cms.children.getActivityLanguage}?activityId=${data}`)
+  }
+  async getActivityCategory(){
+    return this.request.get(API_ENDPOINTS.cms.children.getActivityCategory)
   }
   async getActivityDuratiopnCategory(data){
     return this.request.get(API_ENDPOINTS.cms.children.getActivityDuratiopnCategory)

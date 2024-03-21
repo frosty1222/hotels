@@ -49,8 +49,8 @@ const selectType = [
 ]
 const TourFacility = ref({
   highlighted: object.highlighted || [{ name: "" }],
-  IncludedAndExcluded: [{include:object.IncludedAndExcluded[0].include},
-  {exclude:object.IncludedAndExcluded[1].exclude}] || [
+  IncludedAndExcluded: [{include:Object.keys(object).length > 0 ? object.IncludedAndExcluded[0]:[]},
+  {exclude:Object.keys(object).length > 0 ? object.IncludedAndExcluded[1].exclude:[]}] || [
     { include:[]},
     { exclude:[]}
   ],

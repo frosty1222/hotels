@@ -20,7 +20,7 @@ const selectType = [
     value:"car category"
    }
 ]
-let selectRental = [
+let selectCar = [
 ]
 // addCarFeature: "/api/additional/add-car-feature",
 //       addCarCategory: "/api/category/add-car-category",
@@ -58,13 +58,13 @@ const handleOkPopConfirm =async (record)=>{
         }, 3000); 
       } else message.error(data?.message);
 }
-const { data: resRental } = await restAPI.cms.getSVRental();
-if (resRental.value?.success) {
-  selectRental = resRental.value?.data?.map((c) => ({
+const { data: resCar } = await restAPI.cms.getSVCar();
+if (resCar.value?.success) {
+  selectCar = resCar.value?.data?.map((c) => ({
   label: c.name,
   value: c.id,
 }));
-} else message.error(resRental.value?.message || "Lấy dự liệu thất bại!");
+} else message.error(resCar.value?.message || "Lấy dự liệu thất bại!");
 
 
 const columnsCarFeature = [
@@ -223,7 +223,7 @@ definePageMeta({
           <NFormItem path="serviceId" label="Select rental">
             <NSelect
               v-model:value="formValue.serviceId"
-              :options="selectRental"
+              :options="selectCar"
             />
           </NFormItem>
         </NGi>

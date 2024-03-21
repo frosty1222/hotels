@@ -7,7 +7,7 @@ const message = useMessage();
 const userStore = useUserStore();
 const config = useRuntimeConfig();
 
-const type = route.query.type || "rental amenty";
+const type = route.query.type || "car feature";
 const carId = route.query.carId;
 let object = route.query.object ? JSON.parse(route.query.object):{}
 const formValue = ref({
