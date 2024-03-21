@@ -116,7 +116,7 @@ const API_ENDPOINTS = {
       addRoom: "/api/additional/add-room",
       addRoomFacility: "/api/additional/add-room-facility",
       getRoom: "/api/additional/get-room",
-      getRoomFacility: "/api/additional/add-room-facility",
+      getRoomFacility: "/api/additional/get-room-facility",
     },
   },
 };
