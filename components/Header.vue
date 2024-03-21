@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 const { locale, locales, t } = useI18n();
 const switchLocalePath = useSwitchLocalePath();
-
+const { restAPI } = useApi();
 const settings = ref({
   routers: [
     {
@@ -141,7 +141,73 @@ watch(locale, (newValue, oldValue) => {
     route.name = t(`common.${route.route}`);
   });
 });
-
+console.log(settings.value.routers);
+const AssignedValue = (route:string,data:any)=>{
+   switch(route){
+       case 'hotel':{
+        console.log("data",data)
+        const settingData:any = settings.value.routers;
+        settingData[1].childrens[2].path = `/hotel/${data.id}?type=hotel`
+        settingData[1].childrens[3].path = `/room/${data.room ? data.room[0].id:""}`
+       } 
+        break;
+       case 'tour':{
+        const settingData:any = settings.value.routers;
+        settingData[2].childrens[2].path = `/tour/${data.id}?type=hotel`
+       }
+       break;
+       case 'activity':{
+        const settingData:any = settings.value.routers;
+        settingData[3].childrens[2].path = `/activity/${data.id}`
+       }
+       break;
+       case 'rental':{
+        const settingData:any = settings.value.routers;
+        settingData[4].childrens[2].path = `/rental/${data.id}`
+       }
+       break;
+       case 'car':{
+        const settingData:any = settings.value.routers;
+        settingData[5].childrens[2].path = `/car/${data.id}`
+       }
+       break;
+   }
+}
+const { data: resHotel } = await restAPI.cms.getSVHotel();
+if (resHotel.value?.success) {
+  if(resHotel.value?.data.length > 0){
+      const data = resHotel.value?.data[0];
+      AssignedValue('hotel',data)
+  }
+}
+const { data: resTour } = await restAPI.cms.getSVTour();
+if (resTour.value?.success) {
+  if(resTour.value?.data.length > 0){
+      const data = resTour.value?.data[0];
+      AssignedValue('tour',data)
+  }
+}
+const { data: resActivity } = await restAPI.cms.getSVActivity();
+if (resActivity.value?.success) {
+  if(resActivity.value?.data.length > 0){
+      const data = resActivity.value?.data[0];
+      AssignedValue('activity',data)
+  }
+}
+const { data: resRental } = await restAPI.cms.getSVRental();
+if (resRental.value?.success) {
+  if(resRental.value?.data.length > 0){
+      const data = resRental.value?.data[0];
+      AssignedValue('rental',data)
+  }
+}
+const { data: resCar } = await restAPI.cms.getSVCar();
+if (resCar.value?.success) {
+  if(resCar.value?.data.length > 0){
+      const data = resCar.value?.data[0];
+      AssignedValue('car',data)
+  }
+}
 const languageDropdown = ref<HTMLElement | null>(null);
 const stMainMenu = ref<HTMLElement | null>(null);
 const btnShowMenuMobile = ref<HTMLElement | null>(null);

@@ -1,9 +1,13 @@
 <script lang="ts" setup>
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import { useMessage } from "naive-ui";
 import {onBeforeUnmount, onMounted, ref} from "vue";
 import VueTailwindDatePicker from "vue-tailwind-datepicker";
 import {CustomMarker, GoogleMap} from 'vue3-google-map'
-
+const { restAPI } = useApi();
+const userStore = useUserStore();
+const message = useMessage();
+const route = useRoute();
 useHead(
     {
       title: "Hotel Detail"
@@ -11,7 +15,7 @@ useHead(
 )
 
 const {t} = useI18n()
-
+let showPrice = false;
 const config = useRuntimeConfig();
 
 const settings = ref({
@@ -193,7 +197,51 @@ const scrollToDiv = (): void => {
     targetDiv.value.scrollIntoView({behavior: 'smooth'})
   }
 }
+let hotelData:any = []
+let params = {
+  service_id:Number(route.params?.id) || 0,
+  service_type:route.query?.type || ""
+}
+console.log("params",params);
 
+const { data: resHotel } = await restAPI.cms.getServicesByType(params);
+if (resHotel.value?.success) {
+  console.log("resHotel",resHotel.value?.data)
+  hotelData = resHotel.value?.data;
+}
+const formValue = ref({
+  name:"",
+  email:"",
+  phone:"",
+  message:"",
+  serviceType:params.service_type,
+  service_id:params.service_id,
+})
+const handleSubmit = async (e:any)=>{
+  e?.preventDefault();
+  const body = { ...formValue.value };
+    const response = await fetch(
+      config.public.baseURL + restAPI.API_ENDPOINTEXPORT.cms.addInquiry,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      }
+    );
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const data = await response.json();
+
+    if (data?.success) {
+      message.success(data?.message);
+    } else {
+      message.error(data?.message);
+    }
+}
 onMounted(() => {
   document.addEventListener('click', handleClickOutside);
 });
@@ -210,8 +258,7 @@ onBeforeUnmount(() => {
           class="background-breadcrumb bg-white bg-center bg-no-repeat bg-cover relative lg:pt-[151px] pt-[100px] lg:pb-[60px] pb-0 bg-[url(/images/banner-search-form.png)]">
         <div class="container w-full max-w-[1290px] mx-auto">
           <div class="relative z-10 lg:px-[80px] px-[15px]">
-            <h1 class="text-white lg:text-[36px] text-[24px] lg:leading-[46px] leading-[24px] font-bold">Studio Allston
-              Hotel</h1>
+            <h1 class="text-white lg:text-[36px] text-[24px] lg:leading-[46px] leading-[24px] font-bold">{{ hotelData.name }}</h1>
             <div class="lg:py-[20px] pt-[10px] pb-[20px]">
               <div class="max-w-[1290px]">
                 <ul class="block w-full relative">
@@ -236,19 +283,19 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </div>
-    <div class="max-w-full px-[20px] block">
+    <div class="max-w-full px-[20px] block" >
       <div class="mt-[40px] inline-block w-full overflow-hidden rounded-[20px] relative">
-        <div class="grid lg:grid-cols-3 grid-cols-1 lg:grid-rows-2 gap-3 max-h-[630px]">
-          <template v-for="(galerry, key) in settings.gallery" :key="galerry.id">
+        <div class="grid lg:grid-cols-3 grid-cols-1 lg:grid-rows-2 gap-3 max-h-[630px]" v-if="hotelData.imageLink && hotelData.imageLink.length > 0">
+          <template v-for="(galerry, key) in hotelData.imageLink" :key="galerry.id">
             <a :class="{
             'row-span-2': key == 0,
             'lg:block hidden': key > 0
           }" class="col-span-1" href="#">
               <img
                   :alt="galerry.src"
-                  :src="galerry.src"
+                  :src="`${config.public.baseURL}/photo/${galerry.fileName}`"
                   class="h-full w-full"
-                  @click="showImg(galerry.src)"
+                  @click="showImg(`${config.public.baseURL}/photo/${galerry.fileName}`)"
               >
             </a>
           </template>
@@ -325,12 +372,12 @@ onBeforeUnmount(() => {
         <div class="lg:w-2/3 w-full lg:px-[12px]">
           <div class="flex flex-wrap justify-between items-start">
             <div class="left">
-              <div class="star">
+              <div class="star" v-for="i in Number(hotelData.star_category?.name)"  :key="i">
+                <font-awesome-icon :icon="['fas', 'star']" class="text-[12px] text-[#FA5636]"/>
+                <!-- <font-awesome-icon :icon="['fas', 'star']" class="text-[12px] text-[#FA5636]"/>
                 <font-awesome-icon :icon="['fas', 'star']" class="text-[12px] text-[#FA5636]"/>
                 <font-awesome-icon :icon="['fas', 'star']" class="text-[12px] text-[#FA5636]"/>
-                <font-awesome-icon :icon="['fas', 'star']" class="text-[12px] text-[#FA5636]"/>
-                <font-awesome-icon :icon="['fas', 'star']" class="text-[12px] text-[#FA5636]"/>
-                <font-awesome-icon :icon="['fas', 'star']" class="text-[12px] text-[#FA5636]"/>
+                <font-awesome-icon :icon="['fas', 'star']" class="text-[12px] text-[#FA5636]"/> -->
               </div>
               <div class="sub-heading block">
                 <div class="flex items-center">
@@ -342,15 +389,15 @@ onBeforeUnmount(() => {
                         <span>/5</span>
                       </div>
                       <div class="left">
-                        <span class="font-bold text-base leading-[26px]">Excellent</span>
+                        <span class="font-bold text-base leading-[26px]">{{hotelData.review_score_hotel?.name}}</span>
                         <span class="font-normal text-base leading-[26px] text-[#5E6D77]">
-                        <a class="text-[#3B71FE] ml-[12px]" href="#">(3 reviews)</a>
+                        <a class="text-[#3B71FE] ml-[12px]" href="#">({{hotelData.review_hotel?.length || 0}} Reviews)</a>
                       </span>
                       </div>
                     </div>
                   </div>
                   <span class="h-[3px] w-[3px] bg-[#c4c4c4] rounded-full inline-block"></span>
-                  <div class="address ml-[10px] font-normal text-base leading-[26px] text-[#5E6D77]">California</div>
+                  <div class="address ml-[10px] font-normal text-base leading-[26px] text-[#5E6D77]">{{hotelData.location_name}}</div>
                 </div>
               </div>
             </div>
@@ -371,11 +418,9 @@ onBeforeUnmount(() => {
               About this hotel
             </h2>
             <p class="text-base leading-6 font-[100] text-[#727272] mb-4">
-              Studio Allston Hotel is the ideal point of departure for your excursions in Boston (MA). Conveniently
-              located on the Charles River near Harvard University, the property offers spacious accommodation,
-              contemporary technology and ample facilities for an excellent visit to historic Boston.
+               {{hotelData.description}}
             </p>
-            <p class="text-base leading-6 font-[100] text-[#727272] mb-4">
+            <!-- <p class="text-base leading-6 font-[100] text-[#727272] mb-4">
               Top features of the property include complimentary parking on-site, full service restaurant serving
               breakfast, lunch and dinner and free wireless internet access. Enjoy nearby jogging and bicycle paths,
               while
@@ -386,7 +431,7 @@ onBeforeUnmount(() => {
               unparalleled sense of comfort for the guests such as air conditioning, heating, satellite/cable channels,
               ironing facilities and toiletries. Studio Allston Hotel is an ideal place of stay for travelers seeking
               charm, comfort and convenience in Boston (MA).
-            </p>
+            </p> -->
           </div>
           <div class="attributes">
             <div class="my-[40px] w-full h-[1px] bg-[#EAEEF3]"></div>
@@ -476,8 +521,8 @@ onBeforeUnmount(() => {
           <div ref="targetDiv" class="single">
             <h2 class="font-bold text-2xl leading-10 mb-[20px]">Availability</h2>
             <div class="pb-[10px] border-b border-gray-300">
-              <div class="fetch">
-                <div v-for="item in 3" :key="item"
+              <div class="fetch" v-if="hotelData.rooms && hotelData.rooms.length > 0">
+                <div v-for="item in hotelData.rooms" :key="item"
                      class="mb-[30px] border border-gray-300 overflow-hidden rounded-[8px]">
                   <form>
                     <div class="flex flex-wrap items-stretch">
@@ -496,7 +541,7 @@ onBeforeUnmount(() => {
                                   <nuxt-link
                                       class="font-bold text-[18px] hover:text-[rgba(59,113,254,0.9)] leading-[26px]"
                                       to="/">
-                                    Queen Room
+                                    {{ item.name }}
                                   </nuxt-link>
                                 </h2>
                                 <div class="flex lg:justify-start justify-between items-center">
@@ -508,7 +553,7 @@ onBeforeUnmount(() => {
                                   </span>
                                     <br>
                                     <span class="font-normal text-sm leading-[22px] text-[#5E6D77]">
-                                    260m
+                                    {{ item.room_footage }}m
                                     <sup>2</sup>
                                   </span>
                                   </p>
@@ -519,7 +564,7 @@ onBeforeUnmount(() => {
                                   </span>
                                     <br>
                                     <span class="font-normal text-sm leading-[22px] text-[#5E6D77]">
-                                    x3
+                                    {{ item.no_bed }}
                                   </span>
                                   </p>
                                   <p class="pr-[10px] text-center inline-block">
@@ -529,20 +574,24 @@ onBeforeUnmount(() => {
                                   </span>
                                     <br>
                                     <span class="font-normal text-sm leading-[22px] text-[#5E6D77]">
-                                    x2
-                                  </span>
+                                    {{ item.no_adults || 'x0'}}
+                                    </span>
+                                    <span class="font-normal text-sm leading-[22px] text-[#5E6D77]">
+                                    {{ item.no_children || 'x0'}}
+                                    </span>
                                   </p>
                                 </div>
                               </div>
                             </div>
                           </div>
                           <div class="col-span-1">
-                            <nuxt-link
+                            <span v-show="showPrice === true"> {{ item.price }}/night</span>
+                            <button
                                 class="lg:m-0 mb-[15px] rounded-full bg-[#3B71FE] py-[13px] px-[25px] font-medium text-white text-base leading-[20px] block lg:float-right lg:mr-[30px] lg:ml-0 ml-[15px]"
-                                to="/hotel/room/1">
+                                @click="showPrice = true">
                               Show
                               price
-                            </nuxt-link>
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -564,10 +613,10 @@ onBeforeUnmount(() => {
                       <span>/5</span>
                     </div>
                     <div class="review-score ml-[5px] text-[22px] font-bold leading-[32px]">
-                      Excellent
+                      {{hotelData.review_score_hotel?.name}}
                     </div>
                     <div class="review-score ml-[10px] text-base text-[#5E6D77] font-bold leading-[32px]">
-                      (3 reviews)
+                      ({{hotelData.review_hotel?.length || 0}} Reviews)
                     </div>
                   </div>
                   <div class="grid lg:grid-cols-2 gap-10">
@@ -618,9 +667,9 @@ onBeforeUnmount(() => {
               </div>
             </div>
             <div class="mt-[30px] text-center text-sm text-[#5E6D77]">
-              3 reviews on this Hotel - Showing 1 to 3
+              {{hotelData.review_hotel?.length || 0}} reviews on this Hotel - Showing 1 to {{hotelData.review_hotel?.length || 0}}
             </div>
-            <div v-for="item in 3" :key="item" class="mt-[30px]">
+            <div v-for="item in hotelData.reviews" :key="item" class="mt-[30px]">
               <div class="py-[30px] border-t border-gray-300 text-sm">
                 <div class="flex justify-between items-center">
                   <div class="flex items-center">
@@ -628,8 +677,8 @@ onBeforeUnmount(() => {
                       <img alt="/images/u32.jpeg" class="w-[50px] h-[50px] rounded-full" src="/images/u32.jpeg">
                     </div>
                     <div class="right table-cell">
-                      <div class="text-base font-medium leading-[26px]">modmix</div>
-                      <div class="text-sm leading-[22px] text-center text-[#5E6D77]">10/01/2024</div>
+                      <div class="text-base font-medium leading-[26px]">{{ item.name }}</div>
+                      <div class="text-sm leading-[22px] text-center text-[#5E6D77]">{{ item.createdAt }}</div>
                     </div>
                   </div>
                   <div class="flex gap-2 items-center">
@@ -639,7 +688,10 @@ onBeforeUnmount(() => {
                 </div>
                 <div class="flex mt-[18px]">
                   <ul>
-                    <li class="inline-block mr-[6px]">
+                    <li class="inline-block mr-[6px]"  v-for="i in Number((item.cleanliness_star + item.comunication_star +item.checkin_star + item.accuracy_star + item.location_star +item.value_star) / 6)"  :key="i">
+                      <font-awesome-icon :icon="['fas', 'star']" class="text-sm text-[#ffb21d]"/>
+                    </li>
+                    <!-- <li class="inline-block mr-[6px]">
                       <font-awesome-icon :icon="['fas', 'star']" class="text-sm text-[#ffb21d]"/>
                     </li>
                     <li class="inline-block mr-[6px]">
@@ -650,16 +702,12 @@ onBeforeUnmount(() => {
                     </li>
                     <li class="inline-block mr-[6px]">
                       <font-awesome-icon :icon="['fas', 'star']" class="text-sm text-[#ffb21d]"/>
-                    </li>
-                    <li class="inline-block mr-[6px]">
-                      <font-awesome-icon :icon="['fas', 'star']" class="text-sm text-[#ffb21d]"/>
-                    </li>
+                    </li> -->
                   </ul>
                 </div>
                 <div class="mt-[12px]">
                   <p class="font-normal text-base text-[#74818a]">
-                    clean rooms, great staff” The room had a great ocean view, room was very clean and big. the staff
-                    super friendly and nice.
+                    {{ item.note }}
                   </p>
                 </div>
               </div>
@@ -711,7 +759,7 @@ onBeforeUnmount(() => {
                 </div>
                 <div class="mb-[24px] rounded-[10px] border border-gray-300 px-[15px] py-[20px]">
                   <div class="grid sm:grid-cols-2">
-                    <div v-for="vote in settings.votes" class="grid grid-cols-2 mb-[10px]">
+                    <div v-for="vote in settings.votes" :key="vote" class="grid grid-cols-2 mb-[10px]">
                       <label class="font-normal text-base leading-[26px]">{{ vote.label }}</label>
                       <div>
                         <ul class="relative">
@@ -793,7 +841,7 @@ onBeforeUnmount(() => {
                     <div v-show="settings.dateCheckin.isShow"
                          class="fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
                       <VueTailwindDatePicker
-                          v-model="settings.dateCheckin.data"
+                          :v-model="settings.dateCheckin.data"
                           :shortcuts="false"
                           class="whitespace-no-wrap"
                           no-input
@@ -814,7 +862,7 @@ onBeforeUnmount(() => {
                     <div v-show="settings.dateCheckout.isShow"
                          class="fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
                       <VueTailwindDatePicker
-                          v-model="settings.dateCheckout.data"
+                          :v-model="settings.dateCheckout.data"
                           :shortcuts="false"
                           class="whitespace-no-wrap"
                           no-input
@@ -917,29 +965,31 @@ onBeforeUnmount(() => {
               </div>
             </div>
             <div v-show="settings.tabActive == 1">
-              <form class="my-[25px]">
+              <form class="my-[25px]"  ref="formRef" :model="formValue">
                 <div class="block mb-[16px]">
                   <label>Name (*)</label>
-                  <input class="w-full text-base leading-[26px] rounded-[10px] text-[#5E6D77] border border-gray-300"
+                  <input v-model="formValue.name" class="w-full text-base leading-[26px] rounded-[10px] text-[#5E6D77] border border-gray-300"
                          type="text">
                 </div>
                 <div class="block mb-[16px]">
                   <label>E-mail (*)</label>
-                  <input class="w-full text-base leading-[26px] rounded-[10px] text-[#5E6D77] border border-gray-300"
+                  <input v-model="formValue.email" class="w-full text-base leading-[26px] rounded-[10px] text-[#5E6D77] border border-gray-300"
                          type="email">
                 </div>
                 <div class="block mb-[16px]">
                   <label>Phone</label>
-                  <input class="w-full text-base leading-[26px] rounded-[10px] text-[#5E6D77] border border-gray-300"
+                  <input v-model="formValue.phone" class="w-full text-base leading-[26px] rounded-[10px] text-[#5E6D77] border border-gray-300"
                          type="text">
                 </div>
                 <div class="block mb-[16px]">
                   <label>Note</label>
                   <textarea
+                  v-model="formValue.message"
                       class="w-full text-base leading-[26px] rounded-[10px] text-[#5E6D77] border border-gray-300 h-[80px] resize-none"></textarea>
                 </div>
                 <div class="block mb-[16px]">
                   <button
+                  @click="(e)=>handleSubmit()"
                       class="rounded-full w-full text-white py-[15px] px-[20px] bg-[#3B71FE] hover:bg-[rgba(59,113,254,0.9)] text-base">
                     Send Message
                   </button>

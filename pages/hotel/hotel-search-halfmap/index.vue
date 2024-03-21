@@ -1,7 +1,11 @@
 <script lang="ts" setup>
 import {CustomMarker, GoogleMap} from 'vue3-google-map'
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-
+import { useMessage } from 'naive-ui';
+const { restAPI } = useApi();
+const userStore = useUserStore();
+const message = useMessage();
+const route = useRoute();
 const config = useRuntimeConfig();
 const {t} = useI18n()
 useHead(
@@ -9,7 +13,11 @@ useHead(
       title: "Hotel Search Halfmap"
     }
 )
-
+let hotelData = [];
+const { data: resHotel } = await restAPI.cms.getSVHotel();
+if (resHotel.value?.success) {
+  hotelData = resHotel.value?.data;
+}
 const settings = ref({
   filterPrice: {
     data: [0, 254],

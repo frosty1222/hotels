@@ -63,6 +63,8 @@ const API_ENDPOINTS = {
     additionalDeleteContact: "/api/additional/delete-contact",
 
     askQuestion: "/api/user/add-ask-question",
+    getServiceDetail:"/api/service/service-detail",
+    addInquiry:"/api/user/add-inquiry",
     children: {
       addHotelRule: "/api/hotel/add-hotel-rule",
       addHotelFacility: "/api/hotel/add-hotel-facility",
@@ -266,7 +268,8 @@ class CMSManager {
     return this.request.get(API_ENDPOINTS.cms.allServices, data);
   }
   async getServicesByType(data) {
-    return this.request.get(API_ENDPOINTS.cms.services, data);
+    console.log(21323123)
+    return this.request.get(`${API_ENDPOINTS.cms.getServiceDetail}?service_id=${data.service_id}&service_type=${data.service_type}`);
   }
   async getGalleryServices(data) {
     return this.request.get(API_ENDPOINTS.cms.typeServices, data);
