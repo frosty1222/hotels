@@ -502,18 +502,18 @@ onBeforeUnmount(() => {
             <h2 class="font-bold text-2xl leading-10 mb-[20px]">Rules</h2>
             <table class="mb-[16px] w-full">
               <tbody class="text-left font-normal text-base leading-10 text-[#5E6D77]">
-              <tr>
-                <th class="py-[10px] w-[50%]">Check In</th>
+              <tr v-for="i in hotelData?.hotel_rules" :key="i">
+                <th class="py-[10px] w-[50%]">{{ i.name }}</th>
                 <td>
-                  12:00 pm
+                  {{ i.value }}
                 </td>
               </tr>
-              <tr>
+              <!-- <tr>
                 <th class="py-[10px] w-[50%]">Check Out</th>
                 <td>
                   12:00 pm
                 </td>
-              </tr>
+              </tr> -->
               </tbody>
             </table>
           </div>
@@ -616,7 +616,7 @@ onBeforeUnmount(() => {
                       {{hotelData.review_score_hotel?.name}}
                     </div>
                     <div class="review-score ml-[10px] text-base text-[#5E6D77] font-bold leading-[32px]">
-                      ({{hotelData.review_hotel?.length || 0}} Reviews)
+                      ({{hotelData.review_hotels?.length || 0}} Reviews)
                     </div>
                   </div>
                   <div class="grid lg:grid-cols-2 gap-10">
@@ -667,9 +667,9 @@ onBeforeUnmount(() => {
               </div>
             </div>
             <div class="mt-[30px] text-center text-sm text-[#5E6D77]">
-              {{hotelData.review_hotel?.length || 0}} reviews on this Hotel - Showing 1 to {{hotelData.review_hotel?.length || 0}}
+              {{hotelData.review_hotels?.length || 0}} reviews on this Hotel - Showing 1 to {{hotelData.review_hotels?.length || 0}}
             </div>
-            <div v-for="item in hotelData.reviews" :key="item" class="mt-[30px]">
+            <div v-for="item in hotelData.review_hotels" :key="item" class="mt-[30px]">
               <div class="py-[30px] border-t border-gray-300 text-sm">
                 <div class="flex justify-between items-center">
                   <div class="flex items-center">
@@ -688,7 +688,7 @@ onBeforeUnmount(() => {
                 </div>
                 <div class="flex mt-[18px]">
                   <ul>
-                    <li class="inline-block mr-[6px]"  v-for="i in Number((item.cleanliness_star + item.comunication_star +item.checkin_star + item.accuracy_star + item.location_star +item.value_star) / 6)"  :key="i">
+                    <li class="inline-block mr-[6px]"   v-for="i in Math.round((item.cleanliness_star + item.comunication_star + item.checkin_star + item.accuracy_star + item.location_star + item.value_star) / 6)" :key="i">
                       <font-awesome-icon :icon="['fas', 'star']" class="text-sm text-[#ffb21d]"/>
                     </li>
                     <!-- <li class="inline-block mr-[6px]">

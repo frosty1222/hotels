@@ -153,22 +153,22 @@ const AssignedValue = (route:string,data:any)=>{
         break;
        case 'tour':{
         const settingData:any = settings.value.routers;
-        settingData[2].childrens[2].path = `/tour/${data.id}?type=hotel`
+        settingData[2].childrens[2].path = `/tour/${data.id}?type=tour`
        }
        break;
        case 'activity':{
         const settingData:any = settings.value.routers;
-        settingData[3].childrens[2].path = `/activity/${data.id}`
+        settingData[3].childrens[2].path = `/activity/${data.id}?type=activity`
        }
        break;
        case 'rental':{
         const settingData:any = settings.value.routers;
-        settingData[4].childrens[2].path = `/rental/${data.id}`
+        settingData[4].childrens[2].path = `/rental/${data.id}?type=rental`
        }
        break;
        case 'car':{
         const settingData:any = settings.value.routers;
-        settingData[5].childrens[2].path = `/car/${data.id}`
+        settingData[5].childrens[2].path = `/car/${data.id}?type=car`
        }
        break;
    }

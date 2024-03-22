@@ -93,6 +93,8 @@ const API_ENDPOINTS = {
       addCarCategory: "/api/category/add-car-category",
       getCarCategory: "/api/category/get-car-category",
       getCarFeature: "/api/additional/get-car-feature",
+      addCarBrand:"/api/additional/add-car-brand",
+      getCarBrand:"/api/additional/get-car-brand",
       // rental
       addRentalAmenty:"/api/additional/add-rental-amenty",
       addRentalType:"/api/additional/add-rental-type",
@@ -114,6 +116,8 @@ const API_ENDPOINTS = {
       getActivityDuratiopnCategory:"/api/category/get-activity-duration-category",
       getActivityCategoryLanguage:"/api/category/get-activity-language-category",
       getActivityCategory:"/api/category/get-activity-category",
+      addActivityFacility:"/api/additional/add-activity-facility",
+      getActivityFacility:"/api/additional/get-activity-facility",
       // room
       addRoom: "/api/additional/add-room",
       addRoomFacility: "/api/additional/add-room-facility",
@@ -393,6 +397,9 @@ class CMSManager {
   async getCarCategory(data) {
     return this.request.get(API_ENDPOINTS.cms.children.getCarCategory, data);
   }
+  async getCarBrand(data){
+    `${API_ENDPOINTS.cms.children.getCarBrand}?carId=${data}`
+  }
   // rental
   async getRentalSuitability(data) {
     return this.request.get(
@@ -427,6 +434,9 @@ class CMSManager {
   }
   async getActivityCategoryLanguage(data){
      return this.request.get(API_ENDPOINTS.cms.children.getActivityCategoryLanguage)
+  }
+  async getActivityFacility(data){
+    return this.request.get(`${API_ENDPOINTS.cms.children.getActivityFacility}?activityId=${data}`)
   }
   //room
   async getRoom(data) {

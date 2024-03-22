@@ -20,6 +20,7 @@ const formValue = reactive({
   bottom_content: isEdit ? editData.bottom_content : "",
   image: isEdit ? "" : {},
   status: "hoat_dong",
+  type:isEdit ? editData?.type : ""
 });
 
 const handleSubmit = async (e) => {
@@ -95,6 +96,9 @@ const handleChange = (files) => {
       </NFormItem>
       <NFormItem path="bottom_content" label="Bottom content">
         <NInput v-model:value="formValue.bottom_content" />
+      </NFormItem>
+      <NFormItem path="type" label="type">
+        <NInput v-model:value="formValue.type" />
       </NFormItem>
       <NFormItem path="image" label="Image">
         <NUpload

@@ -9,7 +9,6 @@ const formValue = reactive({
   childType:'car feature',
   serviceId:null
 })
-const isReload = ref(true)
 const selectType = [
    {
     label:"Car feature",
@@ -18,6 +17,10 @@ const selectType = [
    {
     label:"Car category",
     value:"car category"
+   },
+   {
+    label:"Car brand",
+    value:"car brand"
    }
 ]
 let selectCar = [
@@ -33,6 +36,8 @@ const handleOkPopConfirm =async (record)=>{
      url = restAPI.API_ENDPOINTEXPORT.cms.children.addCarFeature;
    }else if(formValue.childType === selectType[1].value){
      url = restAPI.API_ENDPOINTEXPORT.cms.children.addCarCategory;
+   }else if(formValue.childType === selectType[2].value){
+    url = restAPI.API_ENDPOINTEXPORT.cms.children.addCarBrand;
    }
       const body = {
         status:'delete',
@@ -165,6 +170,55 @@ const columnsCarCategory = [
     ),
   },
 ]
+const columnsCarBrand = [
+  {
+    title: "Index",
+    width: 60,
+    align: "center",
+    render: (_, index) => <div>{index + 1}</div>,
+  },
+  {
+    title: "Name",
+    align: "center",
+    render: (row, index) => <div>{row.name}</div>,
+  },
+  {
+    title: "Actions",
+    align: "center",
+    width: 100,
+    render: (record) => (
+      <div class="flex justify-center gap-2">
+        <button
+          class="flex items-center text-primary-blue bg-transparent outline-none p-0 !font-500"
+          onClick={() => navigateTo('/cms/children/car/add-edit?type=' + formValue.childType + '&carId=' + formValue.serviceId + '&object=' + JSON.stringify(record) +'&isEdit='+true)}
+        >
+          <Icon
+            name="material-symbols:edit-square-outline"
+            class="text-2xl text-[#009DFF]"
+          />
+        </button>
+        <NPopconfirm
+          showIcon={false}
+          negativeText="Hủy"
+          positiveText="Xóa"
+          onPositiveClick={() => handleOkPopConfirm(record)}
+        >
+          {{
+            activator: () => (
+              <button class="flex items-center text-red bg-transparent outline-none p-0 !font-500">
+                <Icon
+                  name="material-symbols:delete-outline"
+                  class="text-2xl text-red-500"
+                />
+              </button>
+            ),
+            default: () => "Xác nhận xóa",
+          }}
+        </NPopconfirm>
+      </div>
+    ),
+  },
+]
 const loading = ref(false);
 const dataTable = ref({
   columns: columnsCarFeature,
@@ -197,6 +251,17 @@ watch(
             };
           } else
             message.error(resCarCategory.value?.message || "Lấy dự liệu thất bại!");
+          break;
+          case selectType[2].value:
+          const { data: resCarBrand } = await restAPI.cms.getCarBrand(formValue.serviceId);
+          if (resCarBrand.value?.success) {
+            loading.value = false
+            dataTable.value = {
+              columns: columnsCarBrand,
+              data: resCarBrand.value?.data || [],
+            };
+          } else
+            message.error(resCarBrand.value?.message || "Lấy dự liệu thất bại!");
           break;
       }
     }

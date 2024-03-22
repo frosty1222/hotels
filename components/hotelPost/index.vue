@@ -82,7 +82,7 @@ const emits = defineEmits(["update:modelValue"]);
                 <a :class="{
                   'h-full': view == 'list'
                 }" class="block overflow-hidden hotel-box" href="#">
-                <img alt="/images/feature-12-768x512.png"
+                <img alt="/images/feature-12-768x512.png" v-if="item.imageLink.length > 0"
                     class="w-full h-full transition-all duration-1500 ease-in-out"
                     :src="`${config.public.baseURL}/photo/${item.imageLink[0].fileName}`">
 

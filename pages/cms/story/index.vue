@@ -18,6 +18,7 @@ const config = useRuntimeConfig();
 const formRef = ref(null);
 const formValue = reactive({
   q: null,
+  title:""
 });
 const resData = ref({});
 const paginationReactive = reactive({
@@ -70,6 +71,11 @@ const columns = [
     title: "Bottom content",
     align: "center",
     render: (row, index) => <div>{row.top_content}</div>,
+  },
+  {
+    title: "Type",
+    align: "center",
+    render: (row, index) => <div>{row.type}</div>,
   },
   {
     title: "Image",
@@ -156,6 +162,7 @@ const handleSubmit = (e) => {
     poster_id: formValue.q,
     page: paginationReactive.page,
     limit: paginationReactive.pageSize,
+    title:formValue.title
   });
 };
 const handleResetForm = () => {
@@ -199,6 +206,7 @@ definePageMeta({
 
 <template>
   <div>
+    <label for="">Search by poster Id Or Title</label>
     <NForm ref="formRef" :model="formValue">
       <NGrid x-gap="16" item-responsive responsive="screen">
         <NGi span="24 s:8 xl:6">
@@ -206,6 +214,15 @@ definePageMeta({
             <NInput
               placeholder="Porter id..."
               v-model:value="formValue.q"
+              @keyup.enter="handleSubmit(true)"
+            />
+          </NFormItem>
+        </NGi>
+        <NGi span="24 s:8 xl:6">
+          <NFormItem path="title">
+            <NInput
+              placeholder="Title..."
+              v-model:value="formValue.title"
               @keyup.enter="handleSubmit(true)"
             />
           </NFormItem>

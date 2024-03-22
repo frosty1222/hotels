@@ -4,13 +4,32 @@ import VueTailwindDatePicker from "vue-tailwind-datepicker";
 import {onBeforeUnmount, onMounted, ref} from "vue";
 import {Carousel, Slide} from "vue3-carousel";
 import {initFlowbite} from 'flowbite'
-
+import { useMessage } from "naive-ui";
+const { restAPI } = useApi();
+const message = useMessage();
+const route = useRoute();
 useHead(
     {
       title: "Tour Detail"
     }
 )
 
+let tour:any = []
+const { data: resTour } = await restAPI.cms.getSVTour();
+if (resTour.value?.success) {
+  tour = resTour.value?.data;
+  console.log("tourDetail",tour)
+}
+let tourDetail:any = []
+let params = {
+  service_id:Number(route.params?.id) || 0,
+  service_type:route.query?.type || ""
+}
+const { data: resTourDetail } = await restAPI.cms.getServicesByType(params);
+if (resTourDetail.value?.success) {
+  console.log("resTourDetail",resTourDetail.value?.data)
+  tourDetail = resTourDetail.value?.data;
+}
 const config = useRuntimeConfig();
 
 const {t} = useI18n()
@@ -121,8 +140,7 @@ onBeforeUnmount(() => {
                     California
                   </li>
                   <li class="inline-block lg:text-base text-sm lg:px-[20px] px-[10px] font-[500] text-[rgba(255,255,255,.6)] breadcrumb-element">
-                    Studio
-                    Allston Hotel
+                   {{tourDetail.name}}
                   </li>
                 </ul>
               </div>
@@ -138,11 +156,11 @@ onBeforeUnmount(() => {
             <div class="ml-[10px] text-base text-[#5E6D77] mr-[10px]">
               <font-awesome-icon :icon="['fas', 'star']"
                                  class="text-[#ffb21d] mr-[5px]"/>
-              (3 Reviews)
+              ({{ tourDetail.review_tours?.length || 0}} Reviews)
             </div>
             <div class="h-[3px] w-[3px] bg-[#c4c4c4] rounded-full inline-block"></div>
             <div class="ml-[10px] text-base text-[#5E6D77]">
-              New York City
+              {{ tourDetail.location_name }}
             </div>
           </div>
           <div class="right flex gap-3">
@@ -161,8 +179,8 @@ onBeforeUnmount(() => {
           </div>
         </div>
       </div>
-      <div class="-mx-[20px]">
-        <gallery/>
+      <div class="-mx-[20px]" v-if="tourDetail.imageLink?.length > 0">
+        <gallery :dataImage="tourDetail?.imageLink"/>
       </div>
       <div class="flex">
         <div class="lg:w-2/3 w-full lg:px-[12px]">
@@ -193,7 +211,7 @@ onBeforeUnmount(() => {
                 <div class="flex flex-col justify-start items-start">
                   <span class="font-bold text-base leading-[26px] text-left w-full">Tour Type</span>
                   <span class="font-normal text-sm leading-[22px] text-[#5E6D77] text-left w-full">
-                    Daily Tour
+                    {{ tourDetail.tour_category.name }}
                   </span>
                 </div>
               </p>
@@ -219,7 +237,7 @@ onBeforeUnmount(() => {
                 <div class="flex flex-col justify-start items-start">
                   <span class="font-bold text-base leading-[26px] text-left w-full">Languages</span>
                   <span class="font-normal text-sm leading-[22px] text-[#5E6D77] text-left w-full">
-                    English, Espanol
+                    {{ tourDetail.tour_languages?.tour_language_category?.name }}
                   </span>
                 </div>
               </p>
@@ -227,26 +245,33 @@ onBeforeUnmount(() => {
           </div>
           <div class="description">
             <h2 class="font-bold text-2xl leading-10 text-heading-color mb-5">
-              About this room
+              About this {{ params.service_type }}
             </h2>
             <p class="text-base leading-6 font-[100] text-[#727272] mb-4">
-              Junior Suite comprises of 1 Double Bed or 2 Twin Beds, 2 Bedside Tables, a Desk & Chair. The room is
-              furnished with wall to wall carpeting, trendy furnishings and a balcony.
+              {{ tourDetail.description }}
             </p>
-            <p class="text-base leading-6 font-[100] text-[#727272] mb-4">
+            <!-- <p class="text-base leading-6 font-[100] text-[#727272] mb-4">
               Our ultramodern glass bathroom is equipped with hairdryer, magnifying shaving and make up mirror as well
               as all the amenities you could possible need during your stay.
             </p>
             <p class="text-base leading-6 font-[100] text-[#727272] mb-4">
               A Complimentary Bottle of Wine, Fresh Fruit and Mineral Water, are provided on arrival. Electric current:
               220 Volts. Smoking rooms & inter-connecting rooms are also available.
-            </p>
+            </p> -->
           </div>
           <div class="description">
             <h2 class="font-bold text-2xl leading-10 text-heading-color mb-5">
               Highlights
             </h2>
-            <div class="mb-4 flex justify-start items-center gap-2">
+            <div class="mb-4 flex justify-start items-center gap-2" v-for="h in tourDetail.tour_facility?.highlighted" :key="h">
+              <span class="w-[20px] h-[20px] rounded-full bg-[#cef2e5] text-[#10ac58] flex justify-center items-center">
+                <font-awesome-icon :icon="['fas', 'check']" class="text-[10px]"/>
+              </span>
+              <p class="text-base text-[#5E6D77]">
+                {{ h.name }}
+              </p>
+            </div>
+            <!-- <div class="mb-4 flex justify-start items-center gap-2">
               <span class="w-[20px] h-[20px] rounded-full bg-[#cef2e5] text-[#10ac58] flex justify-center items-center">
                 <font-awesome-icon :icon="['fas', 'check']" class="text-[10px]"/>
               </span>
@@ -269,15 +294,7 @@ onBeforeUnmount(() => {
               <p class="text-base text-[#5E6D77]">
                 Visit eight villages showcasing Polynesian culture
               </p>
-            </div>
-            <div class="mb-4 flex justify-start items-center gap-2">
-              <span class="w-[20px] h-[20px] rounded-full bg-[#cef2e5] text-[#10ac58] flex justify-center items-center">
-                <font-awesome-icon :icon="['fas', 'check']" class="text-[10px]"/>
-              </span>
-              <p class="text-base text-[#5E6D77]">
-                Visit eight villages showcasing Polynesian culture
-              </p>
-            </div>
+            </div> -->
           </div>
           <div class="attributes">
             <div class="my-[40px] w-full h-[1px] bg-[#EAEEF3]"></div>
@@ -287,45 +304,54 @@ onBeforeUnmount(() => {
               </h2>
               <div class="grid lg:grid-cols-2">
                 <div>
-                  <div class="mb-4 flex justify-start items-center gap-2">
-                <span
-                    class="w-[20px] h-[20px] rounded-full bg-[#cef2e5] text-[#10ac58] flex justify-center items-center">
-                  <font-awesome-icon :icon="['fas', 'check']" class="text-[10px]"/>
-                </span>
+                  <div class="mb-4 flex justify-start items-center gap-2"  v-for="h in tourDetail.tour_facility?.IncludedAndExcluded[0]?.include" :key="h">
+                    <span
+                        class="w-[20px] h-[20px] rounded-full bg-[#cef2e5] text-[#10ac58] flex justify-center items-center">
+                      <font-awesome-icon :icon="['fas', 'check']" class="text-[10px]"/>
+                    </span>
+                    <p class="text-base text-[#5E6D77]">
+                      {{ h.name }}
+                    </p>
+                  </div>
+                  <!-- <div class="mb-4 flex justify-start items-center gap-2">
+                    <span
+                        class="w-[20px] h-[20px] rounded-full bg-[#cef2e5] text-[#10ac58] flex justify-center items-center">
+                      <font-awesome-icon :icon="['fas', 'check']" class="text-[10px]"/>
+                    </span>
                     <p class="text-base text-[#5E6D77]">
                       Visit eight villages showcasing Polynesian culture
                     </p>
                   </div>
                   <div class="mb-4 flex justify-start items-center gap-2">
-                <span
-                    class="w-[20px] h-[20px] rounded-full bg-[#cef2e5] text-[#10ac58] flex justify-center items-center">
-                  <font-awesome-icon :icon="['fas', 'check']" class="text-[10px]"/>
-                </span>
+                    <span
+                        class="w-[20px] h-[20px] rounded-full bg-[#cef2e5] text-[#10ac58] flex justify-center items-center">
+                      <font-awesome-icon :icon="['fas', 'check']" class="text-[10px]"/>
+                    </span>
                     <p class="text-base text-[#5E6D77]">
                       Visit eight villages showcasing Polynesian culture
                     </p>
                   </div>
                   <div class="mb-4 flex justify-start items-center gap-2">
-                <span
-                    class="w-[20px] h-[20px] rounded-full bg-[#cef2e5] text-[#10ac58] flex justify-center items-center">
-                  <font-awesome-icon :icon="['fas', 'check']" class="text-[10px]"/>
-                </span>
+                    <span
+                        class="w-[20px] h-[20px] rounded-full bg-[#cef2e5] text-[#10ac58] flex justify-center items-center">
+                      <font-awesome-icon :icon="['fas', 'check']" class="text-[10px]"/>
+                    </span>
                     <p class="text-base text-[#5E6D77]">
                       Visit eight villages showcasing Polynesian culture
                     </p>
-                  </div>
-                  <div class="mb-4 flex justify-start items-center gap-2">
-                <span
-                    class="w-[20px] h-[20px] rounded-full bg-[#cef2e5] text-[#10ac58] flex justify-center items-center">
-                  <font-awesome-icon :icon="['fas', 'check']" class="text-[10px]"/>
-                </span>
-                    <p class="text-base text-[#5E6D77]">
-                      Visit eight villages showcasing Polynesian culture
-                    </p>
-                  </div>
+                  </div> -->
                 </div>
                 <div>
-                  <div class="mb-4 flex justify-start items-center gap-2">
+                  <div class="mb-4 flex justify-start items-center gap-2"  v-for="h in tourDetail.tour_facility?.IncludedAndExcluded[1]?.exclude" :key="h">
+                    <span
+                        class="w-[20px] h-[20px] rounded-full bg-[#fad6d6] text-[#da3838] flex justify-center items-center">
+                      <font-awesome-icon :icon="['fas', 'xmark']" class="text-[10px]"/>
+                    </span>
+                    <p class="text-base text-[#5E6D77]">
+                      {{ h.name }}
+                    </p>
+                  </div>
+                  <!-- <div class="mb-4 flex justify-start items-center gap-2">
                     <span
                         class="w-[20px] h-[20px] rounded-full bg-[#fad6d6] text-[#da3838] flex justify-center items-center">
                       <font-awesome-icon :icon="['fas', 'xmark']" class="text-[10px]"/>
@@ -351,16 +377,7 @@ onBeforeUnmount(() => {
                     <p class="text-base text-[#5E6D77]">
                       Visit eight villages showcasing Polynesian culture
                     </p>
-                  </div>
-                  <div class="mb-4 flex justify-start items-center gap-2">
-                    <span
-                        class="w-[20px] h-[20px] rounded-full bg-[#fad6d6] text-[#da3838] flex justify-center items-center">
-                      <font-awesome-icon :icon="['fas', 'xmark']" class="text-[10px]"/>
-                    </span>
-                    <p class="text-base text-[#5E6D77]">
-                      Visit eight villages showcasing Polynesian culture
-                    </p>
-                  </div>
+                  </div> -->
                 </div>
               </div>
             </div>
@@ -369,7 +386,7 @@ onBeforeUnmount(() => {
           <div class="single">
             <h2 class="font-bold text-2xl leading-10 mb-[20px]">Itinerary</h2>
             <div id="accordion-open" data-accordion="open">
-              <div class="border border-gray-300 rounded-[16px] mb-[12px] bg-[#FCFCFC]">
+              <div class="border border-gray-300 rounded-[16px] mb-[12px] bg-[#FCFCFC]" v-for="h in tourDetail.tour_facility?.itinerary" :key="h">
                 <h2 id="accordion-open-heading-1">
                   <button aria-controls="accordion-open-body-1"
                           aria-expanded="false"
@@ -378,9 +395,9 @@ onBeforeUnmount(() => {
                           type="button">
                   <span class="flex items-center">
                     <span class="px-[16px] py-[8px] border border-gray-300 rounded-[10px] mr-[16px]">
-                      Day 1
+                      {{ h.time }}h
                     </span>
-                    Transportation
+                    {{h.title}}
                   </span>
                     <svg aria-hidden="true" class="w-3 h-3 rotate-180 shrink-0" data-accordion-icon
                          fill="none" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
@@ -391,17 +408,15 @@ onBeforeUnmount(() => {
                 </h2>
                 <div id="accordion-open-body-1" aria-labelledby="accordion-open-heading-1" class="hidden">
                   <div class="p-5">
-                    <p class="mb-2 text-gray-500 dark:text-gray-400">Flowbite is an open-source library of interactive
-                      components built on top of Tailwind CSS including buttons, dropdowns, modals, navbars, and
-                      more.</p>
-                    <p class="text-gray-500 dark:text-gray-400">Check out this guide to learn how to <a
+                    <p class="mb-2 text-gray-500 dark:text-gray-400">{{ h.description }}</p>
+                    <!-- <p class="text-gray-500 dark:text-gray-400">Check out this guide to learn how to <a
                         class="text-blue-600 dark:text-blue-500 hover:underline"
                         href="/docs/getting-started/introduction/">get started</a> and start developing
-                      websites even faster with components on top of Tailwind CSS.</p>
+                      websites even faster with components on top of Tailwind CSS.</p> -->
                   </div>
                 </div>
               </div>
-              <div class="border border-gray-300 rounded-[16px] mb-[12px] bg-[#FCFCFC]">
+              <!-- <div class="border border-gray-300 rounded-[16px] mb-[12px] bg-[#FCFCFC]">
                 <h2 id="accordion-open-heading-2">
                   <button aria-controls="accordion-open-body-2"
                           aria-expanded="false"
@@ -474,7 +489,7 @@ onBeforeUnmount(() => {
                     </ul>
                   </div>
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
           <div class="attributes">
@@ -483,13 +498,13 @@ onBeforeUnmount(() => {
               <h2 class="font-bold text-2xl leading-10 mb-[20px]">Durations</h2>
               <div class="-mb-[20px]">
                 <div class="grid lg:grid-cols-3">
-                  <div class="block">
+                  <div class="block"  v-for="h in tourDetail.tour_facility?.duration" :key="h">
                     <div class="flex items-center gap-3 font-normal text-base leading-6 text-[#5E6D77] pb-5">
                       <font-awesome-icon :icon="['fas', 'tag']" class="text-2xl"/>
-                      3 – 5 hours
+                      {{ h }}
                     </div>
                   </div>
-                  <div class="block">
+                  <!-- <div class="block">
                     <div class="flex items-center gap-3 font-normal text-base leading-6 text-[#5E6D77] pb-5">
                       <font-awesome-icon :icon="['fas', 'tag']" class="text-2xl"/>
                       5 – 7 hours
@@ -500,7 +515,7 @@ onBeforeUnmount(() => {
                       <font-awesome-icon :icon="['fas', 'tag']" class="text-2xl"/>
                       Fullday (+7hours)
                     </div>
-                  </div>
+                  </div> -->
                 </div>
               </div>
             </div>
@@ -510,18 +525,18 @@ onBeforeUnmount(() => {
               <h2 class="font-bold text-2xl leading-10 mb-[20px]">Language</h2>
               <div class="-mb-[20px]">
                 <div class="grid lg:grid-cols-3">
-                  <div class="block">
+                  <div class="block" v-for="h in tourDetail.tour_facility?.language" :key="h">
                     <div class="flex items-center gap-3 font-normal text-base leading-6 text-[#5E6D77] pb-5">
                       <font-awesome-icon :icon="['fas', 'tag']" class="text-2xl"/>
-                      English
+                      {{ h }}
                     </div>
                   </div>
-                  <div class="block">
+                  <!-- <div class="block">
                     <div class="flex items-center gap-3 font-normal text-base leading-6 text-[#5E6D77] pb-5">
                       <font-awesome-icon :icon="['fas', 'tag']" class="text-2xl"/>
                       Espanol
                     </div>
-                  </div>
+                  </div> -->
                 </div>
               </div>
             </div>
@@ -766,7 +781,7 @@ onBeforeUnmount(() => {
             <div class="mt-[30px] text-center text-sm text-[#5E6D77]">
               3 reviews on this Hotel - Showing 1 to 3
             </div>
-            <div v-for="item in 3" :key="item" class="mt-[30px]">
+            <div v-for="item in tourDetail.review_tours" :key="item" class="mt-[30px]">
               <div class="py-[30px] border-t border-gray-300 text-sm">
                 <div class="flex justify-between items-center">
                   <div class="flex items-center">
@@ -785,7 +800,10 @@ onBeforeUnmount(() => {
                 </div>
                 <div class="flex mt-[18px]">
                   <ul>
-                    <li class="inline-block mr-[6px]">
+                    <li class="inline-block mr-[6px]"   v-for="i in Math.round((item.location_star + item.room_star + item.service_star + item.sleep_star) / 4)" :key="i">
+                      <font-awesome-icon :icon="['fas','star']" class="text-sm text-[#ffb21d]"/>
+                    </li>
+                    <!-- <li class="inline-block mr-[6px]">
                       <font-awesome-icon :icon="['fas', 'star']" class="text-sm text-[#ffb21d]"/>
                     </li>
                     <li class="inline-block mr-[6px]">
@@ -796,16 +814,12 @@ onBeforeUnmount(() => {
                     </li>
                     <li class="inline-block mr-[6px]">
                       <font-awesome-icon :icon="['fas', 'star']" class="text-sm text-[#ffb21d]"/>
-                    </li>
-                    <li class="inline-block mr-[6px]">
-                      <font-awesome-icon :icon="['fas', 'star']" class="text-sm text-[#ffb21d]"/>
-                    </li>
+                    </li> -->
                   </ul>
                 </div>
                 <div class="mt-[12px]">
                   <p class="font-normal text-base text-[#74818a]">
-                    clean rooms, great staff” The room had a great ocean view, room was very clean and big. the staff
-                    super friendly and nice.
+                    {{ item.note }}
                   </p>
                 </div>
               </div>
@@ -1121,14 +1135,14 @@ onBeforeUnmount(() => {
                       }"
                     :items-to-show="4"
                 >
-                  <slide v-for="slide in 10" :key="slide">
+                <slide v-for="slide in tour" :key="slide">
                     <div class="px-[10px] pb-[20px] col">
                       <div class="bg-[#fff] shadow-sm md:shadow-lg rounded-[15px] overflow-hidden">
                         <div class="overflow-visible w-full relative">
                           <nuxt-link class="block overflow-hidden" to="/">
                             <img alt="/images/glaciar-vatnajokull-768x512.jpg"
                                  class="w-full h-full block transition-all duration-1500 ease-in-out"
-                                 src="/images/glaciar-vatnajokull-768x512.jpg">
+                                 :src="`${config.public.baseURL}/photo/${slide.imageLink[0].fileName}`">
                           </nuxt-link>
                           <a class="block overflow-hidden" href="#">
                             <div
@@ -1147,7 +1161,7 @@ onBeforeUnmount(() => {
                         <div class="relative p-[20px] overflow-hidden">
                           <h3 class="font-bold text-[18px] leading-[26px] mb-[20px] text-left">
                             <nuxt-link class="inline-block text-left line-clamp-2 hover:text-[rgba(59,113,254,0.9)]"
-                                       to="/">American Parks Trail end Rapid City
+                                       to="/">{{ slide.name }}
                             </nuxt-link>
                           </h3>
                           <div class="flex flex-col justify-start items-start">
@@ -1155,11 +1169,11 @@ onBeforeUnmount(() => {
                               <div class="flex items-center justify-start gap-1">
                                 <font-awesome-icon :icon="['fas', 'star']" class="text-[#ffb21d] text-base"/>
                                 <p class="font-bold text-base text-[#1A2B48] mt-1">
-                                  5
+                                  {{ Number(slide.star_category.name) }}
                                 </p>
                               </div>
                               <p class="text-sm text-[#5E6D77] leading-[22px] font-normal mt-1">
-                                (3 Reviews)
+                                ({{ slide.review_tours?.length || 0 }} Reviews)
                               </p>
                             </div>
                           </div>
@@ -1167,7 +1181,7 @@ onBeforeUnmount(() => {
                               class="price-wrapper border-t border-gray-300 pt-[20px] mt-[20px] mb-[10px] flex flex-col justify-start">
                             <div class="flex flex-1 w-full">
                               <del class="font-normal text-sm text-[#b1bac1] ml-2 leading-[16px]">
-                                €200.00
+                                €{{ slide.from_price }}
                               </del>
                             </div>
                             <div class="flex justify-between items-center">
@@ -1176,19 +1190,19 @@ onBeforeUnmount(() => {
                                 From
                               </span>
                                 <span>
-                                €350.00
+                                €{{ slide.from_price }}
                               </span>
                               </div>
                               <div class="flex justify-between items-center gap-2 text-sm text-[#5E6D77]">
                                 <font-awesome-icon :icon="['far', 'clock']"/>
-                                full day
+                                {{ slide.tour_category.name }}
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </slide>
+                </slide>
                 </carousel>
               </div>
             </div>

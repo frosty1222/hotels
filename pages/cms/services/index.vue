@@ -455,9 +455,9 @@ const handleOkPopConfirm = async (row) => {
 };
 
 watch(
-  () => [formValue.serviceType, isReload.value],
-  async ([newType, newReload]) => {
-    if (newType || newReload) {
+  () => [formValue.serviceType],
+  async ([newType]) => {
+    if (newType) {
       loading.value = true;
       switch (newType) {
         case "hotel":
@@ -538,6 +538,7 @@ watch(
             );
           break;
       }
+      loading.value = false;
     }
   }
 );

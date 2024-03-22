@@ -1,48 +1,37 @@
 <script lang="ts" setup>
 import {ref} from "vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-
+const config = useRuntimeConfig();
 interface IProps {
-  videoSrc?: string
+  videoSrc?: string,
+  dataImage?:any,
+  type?:string
 }
 
 const emits = defineEmits(["update:modelValue"]);
 
 const props = withDefaults(defineProps<IProps>(), {
   videoSrc: '',
+  dataImage:[],
+  type:""
 })
-
+console.log("dataImage",props)
 const settings = ref({
   isImgShow: false,
   imgShowSrc: null,
   isVideoShow: false,
   isShowGalerryMultiple: false,
-  gallery: [
-    {
-      id: 1,
-      src: '/images/Seasonal-outdoor-pool.png'
-    },
-    {
-      id: 2,
-      src: '/images/Hypo-allergenic-bedding-in-room-safe-desk-laptop-workspace.png'
-    },
-    {
-      id: 3,
-      src: '/images/Breakfast-lunch-and-dinner-served-American-cuisine.png'
-    },
-    {
-      id: 4,
-      src: '/images/Exterior-1.png'
-    },
-    {
-      id: 5,
-      src: '/images/feature-5.png'
-    },
-  ],
+  gallery:[],
   gallerryActive: 0,
   isShowFormReview: false,
 })
-
+if(props.dataImage.length > 0){
+  const settingsPattern:{ id: number; src: string; }[] = settings.value.gallery;
+  props.dataImage.map((value:any,index:number)=>{
+    settingsPattern.push({id:index,src:`${config.public.baseURL}/photo/${value.fileName}`});
+  })
+  console.log("settingsPattern",settingsPattern)
+}
 const showImg = (
     src: string,
     isVideo: boolean = false,

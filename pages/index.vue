@@ -3,7 +3,12 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import 'vue3-carousel/dist/carousel.css'
 import {Carousel, Pagination, Slide} from 'vue3-carousel'
 import {useLocationStore} from "~/stories/locations";
-
+import { useMessage } from "naive-ui";
+const { restAPI } = useApi();
+const userStore = useUserStore();
+const message = useMessage();
+const route = useRoute();
+const config = useRuntimeConfig();
 const {t} = useI18n()
 
 useHead({title: t("common.home")});
@@ -18,7 +23,16 @@ const getDataFromApi = async (): Promise<void> => {
   await locationStore.getLocations();
   dataApi.locations = locationStore?.locations;
 }
-
+let paginate = {
+   page:1,
+   limit:10
+}
+let story:any = []
+const { data: resTory } = await restAPI.cms.getStory();
+  if (resTory.value?.success) {
+     story = resTory?.value.data
+     console.log("story",story)
+  }
 const action = ref(null);
 const currentSlide = ref(0)
 const isFirstSlide = ref(true)
@@ -266,14 +280,14 @@ const slideModel = ref(1)
                       }"
                       :items-to-show="4"
                   >
-                    <slide v-for="slide in 10" :key="slide">
+                    <slide v-for="slide in story" :key="slide">
                       <div class="px-[10px] pb-[20px] col">
                         <div class="bg-[#fff] shadow-sm md:shadow-lg rounded-[15px] overflow-hidden">
-                          <div class="overflow-hidden w-full">
+                          <div class="overflow-hidden w-full" v-if="slide.list_image.length > 0">
                             <nuxt-link class="block overflow-hidden" to="/">
                               <img alt="/images/glaciar-vatnajokull-768x512.jpg"
                                    class="w-full h-full block transition-all duration-1500 ease-in-out"
-                                   src="/images/glaciar-vatnajokull-768x512.jpg">
+                                   :src="`${config.public.baseURL}/photo/${slide.list_image[0].fileName}`">
                             </nuxt-link>
                           </div>
                           <div class="relative p-[20px] overflow-hidden">
@@ -286,17 +300,14 @@ const slideModel = ref(1)
                                       <span class="rounded-[50%] mr-[6px] mb-1">
                                         <font-awesome-icon :icon="['fas', 'circle']" class="text-[8px]"/>
                                       </span>
-                                    Hotel
+                                    {{slide.type }}
                                   </nuxt-link>
                                 </li>
                               </ul>
                             </div>
                             <h3 class="font-bold text-[18px] leading-[26px] mb-[5px] text-left">
                               <nuxt-link class="inline-block text-left line-clamp-2 hover:text-[rgba(59,113,254,0.9)]"
-                                         to="/">Pure
-                                Luxe in
-                                Punta Mita the original
-                                contained
+                                         :to="'/'+slide.id">{{ slide.title }}
                               </nuxt-link>
                             </h3>
                             <div
