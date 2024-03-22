@@ -226,8 +226,8 @@ const dataTable = ref({
 });
 watch(
   () => [formValue.childType,formValue.serviceId],
-  async ([newType, newReload]) => {
-    if (newType && newReload) {
+  async ([newType,id]) => {
+    if (newType || id) {
       loading.value = true;
       switch (newType) {
         case selectType[0].value:
@@ -264,6 +264,7 @@ watch(
             message.error(resCarBrand.value?.message || "Lấy dự liệu thất bại!");
           break;
       }
+      loading.value = false;
     }
   }
 );

@@ -29,6 +29,10 @@ const selectType = [
    {
     label:"Car category",
     value:"car category"
+   },
+   {
+    label:"Car brand",
+    value:"car brand"
    }
 ]
 const handleSubmit = async (e, type) => {
@@ -43,6 +47,9 @@ const handleSubmit = async (e, type) => {
         break;
       case selectType[1].value:
         endpoint = restAPI.API_ENDPOINTEXPORT.cms.children.addCarCategory;
+        break;
+        case selectType[2].value:
+        endpoint = restAPI.API_ENDPOINTEXPORT.cms.children.addCarBrand;
         break;
       default:
         throw new Error('Invalid type');
