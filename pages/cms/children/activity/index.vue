@@ -508,7 +508,7 @@ definePageMeta({
           </NFormItem>
         </NGi>
         <NGi span="24 s:8 m:8 xl:6">
-          <NFormItem path="serviceId" label="Select rental">
+          <NFormItem path="serviceId" label="Select Activity">
             <NSelect
               v-model:value="formValue.serviceId"
               :options="selectActivity"

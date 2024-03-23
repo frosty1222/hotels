@@ -131,6 +131,7 @@ const API_ENDPOINTS = {
        getActivityReservation:"/api/reservation/get-activity-reservation",
        getRentalReservation:"/api/reservation/get-rental-reservation",
        getPackageReservation:"/api/reservation/get-package-reservation",
+       updateReservationstatus:"/api/reservation/update-reservation-status",
     },
   },
 };
@@ -487,23 +488,25 @@ class CMSManager {
   async createAskQuestion(data) {
     return this.request.post(API_ENDPOINTS.cms.askQuestion, data);
   }
+
+  
   // Reservastion
   async getHotelReservation(){
      return this.request.get(API_ENDPOINTS.cms.reservation.getHotelReservation);
   }
-  async getHotelReservation(){
+  async getTourReservation(){
     return this.request.get(API_ENDPOINTS.cms.reservation.getTourReservation);
  }
-  async getHotelReservation(){
+  async getCarReservation(){
     return this.request.get(API_ENDPOINTS.cms.reservation.getCarReservation);
   }
-  async getHotelReservation(){
+  async getActivityReservation(){
     return this.request.get(API_ENDPOINTS.cms.reservation.getActivityReservation);
   }
-  async getHotelReservation(){
+  async getRentalReservation(){
     return this.request.get(API_ENDPOINTS.cms.reservation.getRentalReservation);
   }
-  async getHotelReservation(){
+  async getPackageReservation(){
     return this.request.get(API_ENDPOINTS.cms.reservation.getPackageReservation); 
   }
 }

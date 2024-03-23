@@ -14,7 +14,7 @@ const userStore = useUserStore();
 const route = useRoute();
 
 const collapsed = ref(false);
-
+const allowedRoles = ["admin", "poster"];
 const activeMenuKey = computed(() => {
   let menu;
   for (const item of menuOptions) {
@@ -29,6 +29,7 @@ const activeMenuKey = computed(() => {
   return menu;
 });
 const menuOptions = [
+...(allowedRoles.includes(userStore.userInfo.role)? [
   {
     key: "/cms",
     heading: "Dashboard",
@@ -84,50 +85,12 @@ const menuOptions = [
         icon: renderIcon("ep:magic-stick"),
       },
     ],
-  },
+  }, 
   {
     key: "/cms/reservation",
     heading: "Reservation",
-    label: renderLabel("Reservation"),
+    label: renderLabel("Reservation", "/cms/reservation"),
     icon: renderIcon("iconamoon:3d"),
-    children: [
-      {
-        key: "/cms/category/hotel",
-        heading: "Hotel",
-        label: renderLabel("Hotel", "/cms/category/hotel"),
-        icon: renderIcon("ep:magic-stick"),
-      },
-      {
-        key: "/cms/category/rental",
-        heading: "Rental",
-        label: renderLabel("Rental", "/cms/category/rental"),
-        icon: renderIcon("ep:magic-stick"),
-      },
-      {
-        key: "/cms/category/car",
-        heading: "Car",
-        label: renderLabel("Car", "/cms/category/car"),
-        icon: renderIcon("ep:magic-stick"),
-      },
-      {
-        key: "/cms/category/tour",
-        heading: "Tour",
-        label: renderLabel("Tour", "/cms/category/tour"),
-        icon: renderIcon("ep:magic-stick"),
-      },
-      {
-        key: "/cms/category/activity",
-        heading: "Activity",
-        label: renderLabel("Activity", "/cms/category/activity"),
-        icon: renderIcon("ep:magic-stick"),
-      },
-    ],
-  },
-  {
-    key: "/cms/story",
-    heading: "Story",
-    label: renderLabel("Story", "/cms/story"),
-    icon: renderIcon("material-symbols-light:menu-book-outline"),
   },
   {
     key: "/cms/additional",
@@ -147,20 +110,13 @@ const menuOptions = [
     label: renderLabel("User", "/cms/user"),
     icon: renderIcon("material-symbols:manage-accounts-rounded"),
   },
-  // {
-  //   key: "/cms/group",
-  //   heading: "Group",
-  //   label: "Group",
-  //   icon: renderIcon("ic:twotone-pie-chart-outline"),
-  //   children: [
-  //     {
-  //       key: "/cms/user",
-  //       heading: "User",
-  //       label: renderLabel("User", "/cms/user"),
-  //       icon: renderIcon("ic:twotone-pie-chart-outline"),
-  //     },
-  //   ],
-  // },
+  {
+    key: "/cms/story",
+    heading: "Story",
+    label: renderLabel("Story", "/cms/story"),
+    icon: renderIcon("material-symbols-light:menu-book-outline"),
+  },
+  ]:[]),
 ];
 const userOptions = [
   {
@@ -195,6 +151,7 @@ const userOptions = [
 const breadcrumb = computed(() => {
   let br = [];
   if (route.path === "/cms") {
+    console.log("menuOptions",menuOptions)
     br = [menuOptions[0]];
   } else {
     br = [
@@ -207,6 +164,9 @@ const breadcrumb = computed(() => {
   if (br[0]?.children) {
     const index = br[0].children.findIndex((b) => route.path.includes(b.key));
     br.push(br[0].children[index]);
+  }
+  if(!allowedRoles.includes(userStore.userInfo.role)){
+    navigateTo('/forbidden');
   }
   return br;
 });

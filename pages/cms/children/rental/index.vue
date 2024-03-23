@@ -258,7 +258,7 @@ const columnsSuitability = [
   },
 ]
 const columnsAmentyCategory = [
-{
+ {
     title: "Index",
     width: 60,
     align: "center",
