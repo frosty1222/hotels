@@ -124,6 +124,14 @@ const API_ENDPOINTS = {
       getRoom: "/api/additional/get-room",
       getRoomFacility: "/api/additional/get-room-facility",
     },
+    reservation:{
+       getHotelReservation:"/api/reservation/get-hotel-reservation",
+       getTourReservation:"/api/reservation/get-tour-reservation",
+       getCarReservation:"/api/reservation/get-car-reservation",
+       getActivityReservation:"/api/reservation/get-activity-reservation",
+       getRentalReservation:"/api/reservation/get-rental-reservation",
+       getPackageReservation:"/api/reservation/get-package-reservation",
+    },
   },
 };
 const NO_AUTH_API_ENDPOINTS = ["/api/login"];
@@ -476,6 +484,25 @@ class CMSManager {
   // Ask question
   async createAskQuestion(data) {
     return this.request.post(API_ENDPOINTS.cms.askQuestion, data);
+  }
+  // Reservastion
+  async getHotelReservation(){
+     return this.request.get(API_ENDPOINTS.cms.reservation.getHotelReservation);
+  }
+  async getHotelReservation(){
+    return this.request.get(API_ENDPOINTS.cms.reservation.getTourReservation);
+ }
+  async getHotelReservation(){
+    return this.request.get(API_ENDPOINTS.cms.reservation.getCarReservation);
+  }
+  async getHotelReservation(){
+    return this.request.get(API_ENDPOINTS.cms.reservation.getActivityReservation);
+  }
+  async getHotelReservation(){
+    return this.request.get(API_ENDPOINTS.cms.reservation.getRentalReservation);
+  }
+  async getHotelReservation(){
+    return this.request.get(API_ENDPOINTS.cms.reservation.getPackageReservation); 
   }
 }
 
