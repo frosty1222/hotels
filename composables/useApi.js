@@ -406,7 +406,9 @@ class CMSManager {
     return this.request.get(API_ENDPOINTS.cms.children.getCarCategory, data);
   }
   async getCarBrand(data){
-    `${API_ENDPOINTS.cms.children.getCarBrand}?carId=${data}`
+    return this.request.get(
+      `${API_ENDPOINTS.cms.children.getCarBrand}?carId=${data}`
+    )
   }
   // rental
   async getRentalSuitability(data) {

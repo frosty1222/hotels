@@ -105,6 +105,8 @@ if(isEdit === 'no'){
     formValue.value = {
       ...formValue.value,
       tour_category_id: "",
+      type:"",
+      group_size:""
     };
     break;
   case "car":
@@ -119,6 +121,7 @@ if(isEdit === 'no'){
       activity_category_id: "",
       activity_duration_category_id: "",
       activity_language_category_id: "",
+      group_size:""
     };
     break;
   }
@@ -136,6 +139,8 @@ if(isEdit === 'yes'){
     image: "",
     id:object.id,
     imageLink:object.imageLink ? JSON.stringify(object.imageLink):'',
+    type:object.type,
+    group_size:object.group_size
   }
  switch (type) {
   case "hotel":
@@ -362,6 +367,12 @@ const handleChange = (files) => {
           v-model:value="formValue.tour_category_id"
           :options="selectTour"
         />
+      </NFormItem>
+      <NFormItem v-if="type == 'tour'" label="Tour Type">
+        <NInput v-model:value="formValue.type" />
+      </NFormItem>
+      <NFormItem v-if="type == 'tour' || type === 'activity'" label="Tour Type">
+        <NInput v-model:value="formValue.group_size" />
       </NFormItem>
       <!-- Activity -->
       <NFormItem v-if="type == 'activity'" label="Activity category">

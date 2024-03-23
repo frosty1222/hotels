@@ -230,6 +230,16 @@ const columnsTour = [
     render: (row, index) => <div>{row.location_name}</div>,
   },
   {
+    title: "Type",
+    align: "center",
+    render: (row, index) => <div>{row.type}</div>,
+  },
+  {
+    title: "Group size",
+    align: "center",
+    render: (row, index) => <div>{row.group_size}</div>,
+  },
+  {
     title: "From price",
     align: "center",
     render: (row, index) => <div>{row.from_price}</div>,
